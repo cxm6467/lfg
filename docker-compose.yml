@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"  # Adjust the port if your app uses a different one
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/mydb
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    depends_on:
+      - mongo
+    networks:
+      - local
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - local
+networks:
+  local:
+    driver: bridge
+volumes:
+  mongo-data:
