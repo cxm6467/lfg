@@ -1,15 +1,20 @@
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile  # Updated path to the Dockerfile
     ports:
       - "3000:3000"  # Adjust the port if your app uses a different one
     environment:
       - MONGO_URL=mongodb://mongo:27017/mydb
-      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_BOT_TOKEN="${DISCORD_BOT_TOKEN}"
     depends_on:
       - mongo
     networks:
       - local
+    volumes:
+      - .:/app  # Mount the current directory to /app inside the container
+    command: ["ts-node", "./app.ts"]  # Command to run your application
 
   mongo:
     image: mongo:latest
@@ -19,8 +24,10 @@ services:
       - mongo-data:/data/db
     networks:
       - local
+
 networks:
   local:
     driver: bridge
+
 volumes:
   mongo-data:

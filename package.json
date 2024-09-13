@@ -1,34 +1,47 @@
 {
   "name": "lfg",
-  "version": "1.0.0",
-  "description": "node version of a discord based lfg for wow",
-  "main": "app.ts",
-  "directories": {
-    "test": "tests"
-  },
+  "version": "0.0.1",
+  "description": "LFG Node.js Discord.js bot",
+  "main": "./app.ts",
   "scripts": {
-    "dev": "ts-node app.ts",
-    "lint:fix": "eslint --fix .",
-    "lint": "eslint .",
-    "build": "esbuild ./app.ts --bundle --minify-whitespace --minify-syntax --sourcemap --platform=node --target=es2020 --outfile=dist/app.js",
-    "compile": "tsc -b",
-    "start": "ts-node ./index.ts"
+    "build": "echo Nothing to build",
+    "lint": "eslint *.ts --ext .ts",
+    "lint:fix": "eslint *.ts --ext .ts --fix",
+    "test": "jest --config=./jest.config.js",
+    "test:coverage": "jest  --config=./jest.config.js --coverage"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@eslint/js": "^9.10.0",
-    "eslint": "^9.10.0",
-    "globals": "^15.9.0",
-    "typescript": "^5.6.2",
-    "typescript-eslint": "^8.5.0"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cxm6467/lfg.git"
   },
+  "keywords": [
+    "wow",
+    "lfg",
+    "node",
+    "discord",
+    "mythic+",
+    "'mythic",
+    "plus'",
+    "normal",
+    "dungeons",
+    "dungeon",
+    "heroic",
+    "mythich",
+    "'war",
+    "within'",
+    "wwi"
+  ],
+  "author": "Chris Marasco",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cxm6467/lfg/issues"
+  },
+  "homepage": "https://github.com/cxm6467/lfg#readme",
   "dependencies": {
-    "discord.js": "^14.16.1",
+    "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",
-    "esbuild": "^0.23.1",
     "mongoose": "^8.6.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.2"
   }
 }

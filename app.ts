@@ -1,16 +1,19 @@
-import { Client, Events, GatewayIntentBits } from "./node_modules/discord.js";
-import dotenv from "dotenv";
-import { mongooseConnectionHelper } from "./services/mongoose-connection-helper";
+import { Client, ClientOptions, GatewayIntentBits } from 'discord.js';
+import dotenv  from 'dotenv';
+import { mongooseConnectionHelper } from './services/mongoose-connection-helper';
 
 dotenv.config();
 
-(async function() {
-  const { DISCORD_BOT_TOKEN } = process.env;
-  const client = new Client({ intents: GatewayIntentBits.Guilds });
-  
-  client.once(Events.ClientReady, async () => {
-    console.log("Ready!");
+export const  handler = async () => {
+  const clientOptions: ClientOptions = {
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
+  };
+  const client = new Client(clientOptions);
+
+  client.on('ready', async () => {
+    console.log(`Logged in as ${client.user?.tag}`);
     await mongooseConnectionHelper();
   });
-  client.login(DISCORD_BOT_TOKEN);
-})();
+
+  client.login(process.env.DISCORD_BOT_TOKEN);
+}

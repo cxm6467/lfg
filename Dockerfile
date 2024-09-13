@@ -1,21 +1,21 @@
-# backend/Dockerfile
+# Use a Node.js base image
 FROM node:20
 
-# Set the working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Copy package.json and yarn.lock
-COPY package.json package-lock.json ./
+# Copy the package.json and package-lock.json files to the working directory
+COPY package*.json ./
 
-# Install dependencies
+# Install dependencies, including ts-node locally
 RUN npm install
-RUN npm install -g typescript
+RUN npm i -g ts-node
 
-# Copy the rest of the application code
-COPY . ./
+# Copy the rest of the application code to the working directory
+COPY . .
 
-# Compile TypeScript files to JavaScript
-RUN tsc
+# Expose the port that your application listens on
+EXPOSE 3000
 
-# Command to run the application
-CMD ["node", "./bin/app.js"]  # Ensure this matches the path to your compiled entry file
+# Run the handler function in the app.ts file
+CMD ["npx", "ts-node", "app.ts"]
