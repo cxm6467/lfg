@@ -15,11 +15,18 @@ export const MemberSchema = new Schema<IMember, Model<IMember>>({
 }, {collection: 'member', timestamps: true});
 
 export const GroupSchema = new Schema<IWoWGroup, Model<IWoWGroup>>({
+  groupId: { type: String, required: true },
   groupName: { type: String, required: true},
   dungeon: DungeonSchema,
   members: { type: [MemberSchema] },
+  channelId: { type: String },
   guildId: { type: String},
   threadId: { type: String },
   messageId: { type: String },
   embedId: { type: String },
 }, {collection: 'group', timestamps: true});
+
+GroupSchema.pre('save', function(next) {
+  console.log('Document before save:', this); // Log the entire document before saving
+  next();
+});

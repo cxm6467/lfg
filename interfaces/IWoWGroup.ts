@@ -1,6 +1,7 @@
 import { IMember, IDungeon } from './';
 
 export interface IWoWGroup {
+  groupId: string;
   groupName: string;
   dungeon: IDungeon;
   members?: IMember[];
