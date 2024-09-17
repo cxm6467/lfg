@@ -1,6 +1,6 @@
-import { Client, Events, GatewayIntentBits } from 'discord.js';
+import { ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from 'discord.js';
 import dotenv  from 'dotenv';
-import { mongooseConnectionHelper, registerCommands, processResponse, reactToMessage } from './services/';
+import { mongooseConnectionHelper, registerCommands, processInteractionResponse, reactToMessage, processModalSubmit } from './services/';
 import { GroupModel } from './models/group';
 
 
@@ -22,9 +22,19 @@ client.once(Events.ClientReady, async (readyClient ) => {
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
-  if(!interaction.isChatInputCommand()) return;
-  console.log(`Interaction received: ${interaction.commandName}`);
-  if(interaction.commandName === 'lfm') await processResponse(interaction);
+  if(interaction.isCommand()){
+    console.log(`Interaction received: ${interaction.commandName}`);
+    if(interaction.commandName === 'lfm') await processInteractionResponse(interaction as ChatInputCommandInteraction);
+  }
+  if(interaction.isModalSubmit()){
+    const groupId = interaction.customId.match(/\[(.*?)\]/)?.[1];
+    const model = await GroupModel.findOne({groupId});
+    const groupMessage = await processModalSubmit(interaction);
+    await model?.updateOne({messageId: groupMessage?.id});
+    // TODO: Add embed to the message and update the model with the embed id
+    // TODO: create thread and add threadId to model
+  }
+
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN!);

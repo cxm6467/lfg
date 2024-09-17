@@ -1,5 +1,5 @@
 import { Schema, Model } from "mongoose";
-import { IDungeon, IMember, IWoWGroup } from "../interfaces";
+import { IDungeon, IMember, IGroup } from "../interfaces";
 import { DungeonName, DungeonType, MemberRole } from "../enums";
 
 export const DungeonSchema = new Schema<IDungeon, Model<IDungeon>>({  
@@ -14,7 +14,7 @@ export const MemberSchema = new Schema<IMember, Model<IMember>>({
   role: { type: String, enum: MemberRole },
 }, {collection: 'member', timestamps: true});
 
-export const GroupSchema = new Schema<IWoWGroup, Model<IWoWGroup>>({
+export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
   groupId: { type: String, required: true },
   groupName: { type: String, required: true},
   dungeon: DungeonSchema,
@@ -23,10 +23,17 @@ export const GroupSchema = new Schema<IWoWGroup, Model<IWoWGroup>>({
   guildId: { type: String},
   threadId: { type: String },
   messageId: { type: String },
+  notes: { type: String },
   embedId: { type: String },
+  startTime: { type: Date },
 }, {collection: 'group', timestamps: true});
 
 GroupSchema.pre('save', function(next) {
   console.log('Document before save:', this); // Log the entire document before saving
+  next();
+});
+
+GroupSchema.pre('updateOne', function(next) {
+  console.log('Document before updateOne:', this); // Log the entire document before updating
   next();
 });

@@ -1,10 +1,12 @@
-import { IMember, IDungeon } from './';
+import { IMember, IDungeon } from '.';
 
-export interface IWoWGroup {
+export interface IGroup {
   groupId: string;
   groupName: string;
   dungeon: IDungeon;
   members?: IMember[];
+  startTime?: Date;
+  notes?: string;
   channelId?: string;
   guildId?: string;
   threadId?: string;

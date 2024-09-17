@@ -1,7 +1,7 @@
 import { Client, TextChannel, NewsChannel, ThreadChannel, PermissionsBitField } from "discord.js";
-import { IWoWGroup } from "../interfaces";
+import { IGroup } from "../interfaces";
 
-export const reactToMessage = async (client: Client, group: IWoWGroup) => {
+export const reactToMessage = async (client: Client, group: IGroup) => {
   try {
     if (!client.user) {
       console.log('Bot user is not available yet. Make sure this function is called after the ready event.');
@@ -41,7 +41,12 @@ export const reactToMessage = async (client: Client, group: IWoWGroup) => {
   
     // Get the first message from the collection
     const groupMessage = messages.first();
-    await groupMessage?.react('👍');
+    if (groupMessage) {
+      console.log(`Successfully fetched message with ID ${group.messageId}`);
+      await groupMessage.react('👍');     
+    } else {
+      console.log(`Message with ID ${group.messageId} not found.`);
+    }
 
   } catch (error) {
     console.error(`Error reacting to message in guild ${group.guildId}:`, error);
