@@ -1,6 +1,7 @@
 import { Schema, Model } from "mongoose";
 import { IDungeon, IMember, IGroup } from "../interfaces";
-import { DungeonName, DungeonType, MemberRole } from "../enums";
+import { ButtonType, DungeonName, DungeonType, MemberRole } from "../enums";
+import { IButton } from "../interfaces/IButton";
 
 export const DungeonSchema = new Schema<IDungeon, Model<IDungeon>>({  
   name: { type: String, required: true, enum: DungeonName },
@@ -14,11 +15,17 @@ export const MemberSchema = new Schema<IMember, Model<IMember>>({
   role: { type: String, enum: MemberRole },
 }, {collection: 'member', timestamps: true});
 
+export const ButtonSchema = new Schema<IButton, Model<IButton>>({
+  type: { type: String, required: true, enum: ButtonType},
+  emoji: { type: String, required: true },
+}, {collection: 'button', timestamps: true});
+
 export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
   groupId: { type: String, required: true },
   groupName: { type: String, required: true},
   dungeon: DungeonSchema,
   members: { type: [MemberSchema] },
+  buttons: { type: [ButtonSchema] },
   channelId: { type: String },
   guildId: { type: String},
   threadId: { type: String },
@@ -28,12 +35,12 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
   startTime: { type: Date },
 }, {collection: 'group', timestamps: true});
 
-GroupSchema.pre('save', function(next) {
-  console.log('Document before save:', this); // Log the entire document before saving
-  next();
-});
+// GroupSchema.pre('save', function(next) {
+//   console.log('Document before save:', this); // Log the entire document before saving
+//   next();
+// });
 
-GroupSchema.pre('updateOne', function(next) {
-  console.log('Document before updateOne:', this); // Log the entire document before updating
-  next();
-});
+// GroupSchema.pre('updateOne', function(next) {
+//   console.log('Document before updateOne:', this); // Log the entire document before updating
+//   next();
+// });

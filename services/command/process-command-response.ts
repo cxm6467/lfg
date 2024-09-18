@@ -1,8 +1,8 @@
-import { IGroup } from "../interfaces";
+import { IGroup } from "../../interfaces";
 import { v4 as uuidv4 } from 'uuid';
-import { addModal } from "./add-modal";
-import { DungeonName, DungeonType, MemberRole } from "../enums";
-import { ChatInputCommandInteraction, CommandInteraction, Interaction } from "discord.js";
+import { addModal } from "../modal/add-modal";
+import { DungeonName, DungeonType, MemberRole } from "../../enums";
+import { ChatInputCommandInteraction } from "discord.js";
 
 export const processInteractionResponse = async (interaction: ChatInputCommandInteraction) => { 
 

@@ -1,6 +1,6 @@
 import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ChatInputCommandInteraction } from "discord.js"
-import { IGroup } from "../interfaces"
-import { GroupModel } from "../models/group";
+import { IGroup } from "../../interfaces"
+import { GroupModel } from "../../models/group";
 
 export const addModal = async (interaction: ChatInputCommandInteraction, group:IGroup) => {
   const dateInput = new TextInputBuilder()

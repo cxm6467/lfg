@@ -1,7 +1,12 @@
-import { ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from 'discord.js';
+import { ButtonInteraction, ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from 'discord.js';
 import dotenv  from 'dotenv';
-import { mongooseConnectionHelper, registerCommands, processInteractionResponse, reactToMessage, processModalSubmit } from './services/';
+import { processModalSubmit, addEmbedButtons, handleButtonInteraction } from './services/';
+import { mongooseConnectionHelper } from './services/mongoose-connection-helper';
 import { GroupModel } from './models/group';
+import { addEmbed } from './services/embed/add-embed';
+import { registerCommands, processInteractionResponse } from './services/command';
+import { reactToMessage } from './utils';
+import { IGroup } from './interfaces';
 
 
 dotenv.config();
@@ -29,10 +34,18 @@ client.on(Events.InteractionCreate, async (interaction) => {
   if(interaction.isModalSubmit()){
     const groupId = interaction.customId.match(/\[(.*?)\]/)?.[1];
     const model = await GroupModel.findOne({groupId});
-    const groupMessage = await processModalSubmit(interaction);
-    await model?.updateOne({messageId: groupMessage?.id});
-    // TODO: Add embed to the message and update the model with the embed id
-    // TODO: create thread and add threadId to model
+    const groupMessageId = await processModalSubmit(interaction);
+    console.log('Group message id:', groupMessageId);
+    await model?.updateOne({messageId: groupMessageId});
+    await addEmbed(client, groupId ?? '');
+    await addEmbedButtons(client, groupId?? '');
+  }
+  if(interaction.isButton()){
+    console.log('Button interaction:', interaction.customId);
+    const matchResult = interaction.customId.match(/^([^\[]+)\[([^\]]+)\]/);
+    const buttonAction = matchResult?.[1]; // Text before the brackets
+    const groupId = matchResult?.[2]; // Text inside the brackets
+    await handleButtonInteraction(buttonAction ?? '', groupId ?? '', interaction.user, client, interaction as ButtonInteraction);
   }
 
 });
