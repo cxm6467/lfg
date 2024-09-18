@@ -1,7 +1,7 @@
 import { Schema, Model } from "mongoose";
 import { IDungeon, IMember, IGroup } from "../interfaces";
-import { ButtonType, DungeonName, DungeonType, MemberRole } from "../enums";
-import { IButton } from "../interfaces/IButton";
+import { DungeonName, DungeonType, MemberRole } from "../enums";
+
 
 export const DungeonSchema = new Schema<IDungeon, Model<IDungeon>>({  
   name: { type: String, required: true, enum: DungeonName },
@@ -15,17 +15,11 @@ export const MemberSchema = new Schema<IMember, Model<IMember>>({
   role: { type: String, enum: MemberRole },
 }, {collection: 'member', timestamps: true});
 
-export const ButtonSchema = new Schema<IButton, Model<IButton>>({
-  type: { type: String, required: true, enum: ButtonType},
-  emoji: { type: String, required: true },
-}, {collection: 'button', timestamps: true});
-
 export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
   groupId: { type: String, required: true },
   groupName: { type: String, required: true},
   dungeon: DungeonSchema,
   members: { type: [MemberSchema] },
-  buttons: { type: [ButtonSchema] },
   channelId: { type: String },
   guildId: { type: String},
   threadId: { type: String },
