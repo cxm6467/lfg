@@ -1,6 +1,7 @@
 import { Client, EmbedBuilder, StartThreadOptions } from "discord.js";
 import { GroupModel } from "../../models/group";
 import { getMessageByMessageId } from "../../utils";
+import { MemberRole } from "../../enums";
 
 export const addEmbed = async (client: Client, groupId: string) => {
   const group = await GroupModel.findOne({ groupId });
@@ -14,22 +15,33 @@ export const addEmbed = async (client: Client, groupId: string) => {
     const embed = new EmbedBuilder()
       .setTitle(group.groupName || 'Group Name')
       .addFields([
-        { 
-          name: 'Dungeon', 
-          value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
-            ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
-            : 'N/A' 
-        },
-        { 
-          name: 'Members', 
-          value: group.members && group.members.length > 0 
-            ? group.members.map(member => `<@${member.userId}> - ${member.role}`).join('\n') 
-            : 'No members yet.' 
-        },
-        { 
-          name: 'Notes', 
-          value: group.notes || 'No notes available.' 
-        }
+      { 
+        name: '**Dungeon**', 
+        value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
+        ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
+        : 'None' 
+      },
+      { 
+        name: '**Tank**',
+        value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
+        ? `<@${(group.members ?? []).find(member => member.role ===  MemberRole.Tank)?.userId}>` 
+        : 'None'}`
+      },
+      { 
+        name: '**Healer**',
+        
+        value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
+        ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
+        : 'None'}`
+      },
+      { 
+        name: '**DPS**',
+        value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
+      },
+      { 
+        name: '**Notes**', 
+        value: group.notes || 'No notes available.' 
+      }
       ]);
 
     console.log('Embed created:', embed);

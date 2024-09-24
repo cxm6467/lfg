@@ -1,7 +1,6 @@
 import { ButtonInteraction, Client, ThreadChannel, User } from "discord.js";
 import { GroupModel } from "../../models/group";
 import { getThreadByMessageId } from "../../utils";
-import { MemberRole } from "../../enums";
 import { addBrezButtonHandler, addDpsButtonHandler, addHealerButtonHandler, addLustButtonHandler, addTankButtonHandler, clearRoleButtonHandler, finishDungeonButtonHandler } from "../../handlers";
 
 export const handleButtonInteraction = async (customId: string, groupId:string, user: User, client: Client, interaction:ButtonInteraction) => {
@@ -44,7 +43,7 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
       await interaction.deferUpdate();
       break;
     case 'addClearRole':
-      if(group && thread) await clearRoleButtonHandler(interaction, group, user, thread);
+      if(group && thread) await clearRoleButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Clear Role button pressed');
       break;   

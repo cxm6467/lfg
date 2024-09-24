@@ -6,8 +6,6 @@ import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
 import { reactToMessage } from './utils';
-import { IGroup } from './interfaces';
-
 
 dotenv.config();
 
