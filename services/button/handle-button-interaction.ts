@@ -14,17 +14,17 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
   }
   switch(customId){
     case 'addDps':
-      if(group && thread) await addDpsButtonHandler(interaction, group, user, thread);
+      if(group && thread) await addDpsButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Dps button pressed');
       break;
     case 'addHealer':
-      if(group && thread) await addHealerButtonHandler(interaction, group, user, thread);
+      if(group && thread) await addHealerButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Healer button pressed');
       break;
     case 'addTank':
-      if(group && thread) await addTankButtonHandler(interaction, group, user, thread);
+      if(group && thread) await addTankButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Tank button pressed');
       break;

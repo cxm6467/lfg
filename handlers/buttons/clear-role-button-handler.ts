@@ -38,7 +38,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
     if (roleField) {
       console.log('Role field found:', roleField);
       roleField.value = 'None';
-    }else{
+    } else {
       console.log('Role field not found');
     }
     await embedMessage.edit({ embeds: [embed] });

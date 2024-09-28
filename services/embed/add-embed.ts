@@ -22,20 +22,20 @@ export const addEmbed = async (client: Client, groupId: string) => {
         : 'None' 
       },
       { 
-        name: '**Tank**',
+        name: `**${MemberRole.Tank}**`,
         value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
         ? `<@${(group.members ?? []).find(member => member.role ===  MemberRole.Tank)?.userId}>` 
         : 'None'}`
       },
       { 
-        name: '**Healer**',
+        name: `**${MemberRole.Healer}**`,
         
         value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
         ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
         : 'None'}`
       },
       { 
-        name: '**DPS**',
+        name: `**${MemberRole.Damage}**`,
         value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
       },
       { 
