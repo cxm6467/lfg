@@ -35,7 +35,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
     console.log(embed.fields)
     console.log('Original role:', originalRole);
     console.log('Role field:', roleField);
-    if (roleField) {
+    if (roleField && roleField.value.includes(`<@${user.id}>`)) {
       console.log('Role field found:', roleField);
       roleField.value = 'None';
     } else {
