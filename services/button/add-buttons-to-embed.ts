@@ -33,12 +33,12 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 
       const addLust = new ButtonBuilder()
         .setCustomId(`addLust[${group.groupId}]`)
-        .setLabel('😡')
+        .setLabel('Add Bloodlust or similar buff')
         .setStyle(ButtonStyle.Secondary);
 
       const addBrez = new ButtonBuilder()
         .setCustomId(`addBrez[${group.groupId}]`)
-        .setLabel('⚰️')
+        .setLabel('Add Battle Rez')
         .setStyle(ButtonStyle.Secondary);
 
       const clearRole = new ButtonBuilder()

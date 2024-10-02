@@ -20,6 +20,8 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
         } else {
           await user.send("You can only have 1 Tank in a group.");
         }
+      } else {
+        await user.send("You already have a role in this group.");
       }
     } else {
       console.log(`User with id ${user.id} not found in group with id ${groupId}`);

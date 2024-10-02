@@ -27,14 +27,6 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
   notes: { type: String },
   embedId: { type: String },
   startTime: { type: Date },
+  hasLust: { type: Boolean },
+  hasBrez: { type: Boolean },
 }, {collection: 'group', timestamps: true});
-
-// GroupSchema.pre('save', function(next) {
-//   console.log('Document before save:', this); // Log the entire document before saving
-//   next();
-// });
-
-// GroupSchema.pre('updateOne', function(next) {
-//   console.log('Document before updateOne:', this); // Log the entire document before updating
-//   next();
-// });

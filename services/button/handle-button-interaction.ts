@@ -29,12 +29,12 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
       console.log('Add Tank button pressed');
       break;
     case 'addLust':
-      if(group && thread) await addLustButtonHandler(interaction, group, user, thread);
+      if(group && thread) await addLustButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Lust button pressed');
       break;      
     case 'addBrez':
-      if(group && thread) await addBrezButtonHandler(interaction, group, user, thread);
+      if(group && thread) await addBrezButtonHandler(client, groupId, user);
       await interaction.deferUpdate();
       console.log('Add Brez button pressed');
       break;    

@@ -12,4 +12,6 @@ export interface IGroup {
   threadId?: string;
   messageId?: string;
   embedId?: string;
+  hasLust?: boolean;
+  hasBrez?: boolean;
 }

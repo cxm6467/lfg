@@ -16,31 +16,42 @@ export const addEmbed = async (client: Client, groupId: string) => {
       .setTitle(group.groupName || 'Group Name')
       .addFields([
       { 
-        name: '**Dungeon**', 
-        value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
-        ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
-        : 'None' 
+      name: '**Dungeon**', 
+      value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
+      ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
+      : 'None' 
       },
       { 
-        name: `**${MemberRole.Tank}**`,
-        value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
-        ? `<@${(group.members ?? []).find(member => member.role ===  MemberRole.Tank)?.userId}>` 
-        : 'None'}`
+      name: `**${MemberRole.Tank}**`,
+      value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
+      ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>` 
+      : 'None'}`
       },
       { 
-        name: `**${MemberRole.Healer}**`,
-        
-        value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
-        ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
-        : 'None'}`
+      name: `**${MemberRole.Healer}**`,
+      value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
+      ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
+      : 'None'}`
       },
       { 
-        name: `**${MemberRole.Damage}**`,
-        value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
+      name: `**${MemberRole.Damage}**`,
+      value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
       },
       { 
-        name: '**Notes**', 
-        value: group.notes || 'No notes available.' 
+      name: '**Brez**', 
+      value: group.hasBrez
+      ? '✅'
+      : 'None' 
+      },
+      { 
+      name: '**Lust**', 
+      value: group.hasLust
+      ? '✅'
+      : 'None' 
+      },
+      { 
+      name: '**Notes**', 
+      value: group.notes || 'No notes available.' 
       }
       ]);
 

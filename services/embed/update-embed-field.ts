@@ -1,17 +1,10 @@
 import { Embed, Message } from "discord.js";
-import { MemberRole } from "../../enums";
+import { MemberRole, PartyBuffs } from "../../enums";
 
-export const updateEmbedField = async (message: Message, field: MemberRole, userId: string) => {
-  const embed = message.embeds[0];
+export const updateEmbedField = async (message: Message|undefined, field: MemberRole | PartyBuffs, userId: string) => {
+  const embed = message?.embeds[0];
 
-  const roleField = embed.fields.find(x => x.name.replace(/\*/g, '').trim() === field);
-
-  // if (roleField) {
-  //   if (roleField.value === MemberRole.None) roleField.value = `${(group?.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`;
-  //   roleField.value += `${(group?.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `\n<@${member.userId}>`).join(', ') || 'None'}`;
-  // } else {
-  //   console.log('Role field not found');
-  // }
+  const roleField = embed?.fields.find(x => x.name.replace(/\*/g, '').trim() === field);
 
   if (roleField) {
     switch (field) {
@@ -22,7 +15,17 @@ export const updateEmbedField = async (message: Message, field: MemberRole, user
         roleField.value = `<@${userId}>`;
         break;
       case MemberRole.Damage:
-        roleField.value += `\n<@${userId}>`;
+        if (roleField.value === 'None') {
+          roleField.value = `<@${userId}>`;
+        } else if (!roleField.value.includes(`<@${userId}>`)) {
+          roleField.value += `\n<@${userId}>`;
+        }
+        break;
+      case PartyBuffs.Brez:
+        roleField.value = '✅';
+        break;
+      case PartyBuffs.Lust:
+        roleField.value = '✅';
         break;
       default:
         return;
@@ -31,5 +34,5 @@ export const updateEmbedField = async (message: Message, field: MemberRole, user
     console.log('Role field not found');
   }
 
-  await message.edit({ embeds: [embed] });
+  await message?.edit({ embeds: [embed ?? {}] });
 }
