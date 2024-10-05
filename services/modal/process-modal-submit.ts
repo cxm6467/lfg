@@ -3,6 +3,7 @@ import { GroupModel } from "../../models/group";
 import { parseDate } from "chrono-node";
 import { IProssesedModalData } from "../../interfaces";
 import moment from 'moment-timezone';
+import { TIME_ZONE_MAPPING } from "../../consts";
 
 export const processModalSubmit = async (interaction: ModalSubmitInteraction): Promise<IProssesedModalData | undefined> => {
   const { customId, fields } = interaction;
@@ -13,23 +14,9 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
   const notes = fields.getTextInputValue('notes');
   const groupId = customId.match(/\[(.*?)\]/)?.[1];
 
-  // Define a mapping of common US time zone abbreviations to IANA time zones
-  const timezoneMap: Record<string, string> = {
-    EST: 'America/New_York',
-    EDT: 'America/New_York',
-    CST: 'America/Chicago',
-    CDT: 'America/Chicago',
-    MST: 'America/Denver',
-    MDT: 'America/Denver',
-    PST: 'America/Los_Angeles',
-    PDT: 'America/Los_Angeles',
-    AKST: 'America/Anchorage', // Alaska Standard Time
-    AKDT: 'America/Anchorage', // Alaska Daylight Time
-    HST: 'Pacific/Honolulu',   // Hawaii Standard Time
-  };
 
   // Get the IANA time zone from the abbreviation or fallback to UTC if not found
-  const timeZone = timezoneMap[timeZoneAbbr.toUpperCase()] ?? 'UTC';
+  const timeZone = TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC';
   console.log(`Using time zone: ${timeZone} for abbreviation: ${timeZoneAbbr}`);
 
   let epochTimestamp;
@@ -75,13 +62,14 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
         console.log('Failed to parse start time using chrono-node');
       }
 
+      // Add the notes to the group
       group.notes = notes;
 
       await group.save();
 
       return {
         groupMessage,
-        startTime: epochTimestamp,
+        epochTimestamp,
         timeZone, // Return the IANA timezone format
         notes,
       } as IProssesedModalData;
