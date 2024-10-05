@@ -5,7 +5,7 @@ import { GroupModel } from "../../models/group";
 
 export const addEmbedButtons = async (client: Client, groupId: string) => {
   const group = await GroupModel.findOne({ groupId });;
-  console.log('Adding buttons to embed', { group, client });
+  //console.log('Adding buttons to embed', { group, client });
 
   if (group?.embedId && group.guildId && group.channelId) {
     const embedMessage = await getMessageByMessageId(client, group.embedId, group.guildId, group.channelId);

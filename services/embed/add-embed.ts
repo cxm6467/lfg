@@ -1,16 +1,16 @@
 import { Client, EmbedBuilder, StartThreadOptions } from "discord.js";
 import { GroupModel } from "../../models/group";
 import { getMessageByMessageId } from "../../utils";
-import { MemberRole } from "../../enums";
+import { MemberRole, ModalField } from "../../enums";
 
 export const addEmbed = async (client: Client, groupId: string) => {
   const group = await GroupModel.findOne({ groupId });
   
   if (group?.groupId && group.guildId && group.channelId && group.messageId) {
-    console.log('Group found:', group);
+    //console.log('Group found:', group);
 
     const msg = await getMessageByMessageId(client, group.messageId, group.guildId, group.channelId);
-    console.log('Message found:', msg);
+    //console.log('Message found:', msg);
 
     const embed = new EmbedBuilder()
       .setTitle(group.groupName || 'Group Name')
@@ -20,6 +20,10 @@ export const addEmbed = async (client: Client, groupId: string) => {
       value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
       ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
       : 'None' 
+      },
+      { 
+      name: `**${ModalField.StartTime}**`, 
+      value: 'None' 
       },
       { 
       name: `**${MemberRole.Tank}**`,
@@ -50,15 +54,15 @@ export const addEmbed = async (client: Client, groupId: string) => {
       : 'None' 
       },
       { 
-      name: '**Notes**', 
+      name: `**${ModalField.Notes}**`, 
       value: group.notes || 'No notes available.' 
       }
       ]);
 
-    console.log('Embed created:', embed);
+    //console.log('Embed created:', embed);
 
     const embedMessage = await msg?.edit({ embeds: [embed]  });
-    console.log('Embed message edited:', embedMessage);
+    //console.log('Embed message edited:', embedMessage);
     const thread = await msg?.startThread(
       {
       name: group.groupName || 'Group Name',
@@ -68,7 +72,7 @@ export const addEmbed = async (client: Client, groupId: string) => {
       } as StartThreadOptions
     );
     await group.updateOne({ embedId: embedMessage?.id, threadId: thread?.id });
-    console.log('Group updated:', group);
+    //console.log('Group updated:', group);
   } else {
     console.error('Group not found');
   }
