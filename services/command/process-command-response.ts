@@ -10,7 +10,7 @@ export const processInteractionResponse = async (interaction: ChatInputCommandIn
   const dungeon = interaction.options.get('dungeon')?.value;
   const level = interaction.options.get('level')?.value;
   const role = interaction.options.get('role')?.value;
-  const groupName = `Group for: ${dungeon} ${difficulty} ${level}`;
+  const groupName = `${dungeon} ${difficulty} ${level}`;
 
   const group: IGroup = {
     groupId: uuidv4(),

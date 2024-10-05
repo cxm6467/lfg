@@ -15,3 +15,15 @@ export const TIME_ZONE_MAPPING: Record<string, string> = {
   AKDT: 'America/Anchorage', // Alaska Daylight Time
   HST: 'Pacific/Honolulu',   // Hawaii Standard Time
 };
+
+export enum DUNGEON_URLS {
+  ARA_KARA_CITY_OF_ECHOES = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kikatal.png",
+  CITY_OF_THREADS = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-izo.png",
+  THE_STONEVAULT = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-eirich.png",
+  THE_DAWNBREAKER = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-rashanan.png",
+  MISTS_OF_TIRNA_SCITHE = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-mistcaller.png",
+  THE_NECROTIC_WAKE = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-nalthortherimebinder.png",
+  SIEGE_OF_BORALUS = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-viqgoth.png",
+  GRIM_BATOL = "https://wow.zamimg.com/images/wow/journal/ui-ej-boss-erudax-updated.png",
+  ANY = "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/48px-WoW_icon.svg.png?20171015201105",
+}

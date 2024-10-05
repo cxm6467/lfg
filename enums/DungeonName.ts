@@ -1,11 +1,11 @@
 export enum DungeonName {
-  Any = "Any",
-  AraKaraCityOfEchoes = "Ara-Kara, City of Echoes",
-  CityOfThreads = "City of Threads",
-  Stonevault = "The Stonevault",
-  Dawnbreaker = "The Dawnbreaker",
-  MistsOfTirnaScithe = "Mists of Tirna Scithe",
-  NecroticWake = "The Necrotic Wake",
-  SiegeOfBoralus = "Siege of Boralus",
-  GrimBatol = "Grim Batol"
+  ARA_KARA_CITY_OF_ECHOES = "Ara-Kara, City of Echoes",
+  CITY_OF_THREADS = "City of Threads",
+  THE_STONEVAULT = "The Stonevault",
+  THE_DAWNBREAKER = "The Dawnbreaker",
+  MISTS_OF_TIRNA_SCITHE = "Mists of Tirna Scithe",
+  THE_NECROTIC_WAKE = "The Necrotic Wake",
+  SIEGE_OF_BORALUS = "Siege of Boralus",
+  GRIM_BATOL = "Grim Batol",
+  ANY = "Any"
 }

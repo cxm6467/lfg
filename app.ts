@@ -38,7 +38,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
       console.error('Failed to process modal submit');
       return;
     }
-    const { groupMessage, startTime, timeZone, notes } = modalData;
+    const { groupMessage, epochTimestamp, notes } = modalData;
     console.log('Group message id:', groupMessage?.id);
 
     console.log({modalData});
@@ -53,7 +53,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
     console.log({fields: msg?.embeds[0].fields});
 
-    await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, startTime);
+    await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
     await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
   }
   if(interaction.isButton()){

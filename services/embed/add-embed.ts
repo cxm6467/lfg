@@ -1,6 +1,6 @@
 import { Client, EmbedBuilder, StartThreadOptions } from "discord.js";
 import { GroupModel } from "../../models/group";
-import { getMessageByMessageId } from "../../utils";
+import { convertDungeonName as convertDungeonNameToUrl, getMessageByMessageId } from "../../utils";
 import { MemberRole, ModalField } from "../../enums";
 
 export const addEmbed = async (client: Client, groupId: string) => {
@@ -12,50 +12,54 @@ export const addEmbed = async (client: Client, groupId: string) => {
     const msg = await getMessageByMessageId(client, group.messageId, group.guildId, group.channelId);
     //console.log('Message found:', msg);
 
+
+    const thumbnailUrl = convertDungeonNameToUrl(group.dungeon?.name);
+    console.log('Thumbnail URL:', thumbnailUrl, 'Dungeon:', group.dungeon?.name);
+
     const embed = new EmbedBuilder()
-      .setTitle(group.groupName || 'Group Name')
+      .setThumbnail(thumbnailUrl)
       .addFields([
       { 
-      name: '**Dungeon**', 
-      value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
-      ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
-      : 'None' 
+        name: '**Dungeon**', 
+        value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level 
+        ? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}` 
+        : 'None' 
       },
       { 
-      name: `**${ModalField.StartTime}**`, 
-      value: 'None' 
+        name: `**StartTime**`, 
+        value: 'None' 
       },
       { 
-      name: `**${MemberRole.Tank}**`,
-      value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
-      ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>` 
-      : 'None'}`
+        name: `**${MemberRole.Tank}**`,
+        value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
+        ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>` 
+        : 'None'}`
       },
       { 
-      name: `**${MemberRole.Healer}**`,
-      value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
-      ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
-      : 'None'}`
+        name: `**${MemberRole.Healer}**`,
+        value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
+        ? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>` 
+        : 'None'}`
       },
       { 
-      name: `**${MemberRole.Damage}**`,
-      value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
+        name: `**${MemberRole.Damage}**`,
+        value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`
       },
       { 
-      name: '**Brez**', 
-      value: group.hasBrez
-      ? '✅'
-      : 'None' 
+        name: '**Brez**', 
+        value: group.hasBrez
+        ? '✅'
+        : 'None' 
       },
       { 
-      name: '**Lust**', 
-      value: group.hasLust
-      ? '✅'
-      : 'None' 
+        name: '**Lust**', 
+        value: group.hasLust
+        ? '✅'
+        : 'None' 
       },
       { 
-      name: `**${ModalField.Notes}**`, 
-      value: group.notes || 'No notes available.' 
+        name: `**${ModalField.Notes}**`, 
+        value: group.notes || 'No notes available.' 
       }
       ]);
 

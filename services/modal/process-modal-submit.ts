@@ -14,7 +14,6 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
   const notes = fields.getTextInputValue('notes');
   const groupId = customId.match(/\[(.*?)\]/)?.[1];
 
-
   // Get the IANA time zone from the abbreviation or fallback to UTC if not found
   const timeZone = TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC';
   console.log(`Using time zone: ${timeZone} for abbreviation: ${timeZoneAbbr}`);
@@ -41,11 +40,12 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
       if (parsedStartTime) {
         console.log(`Parsed start time (local): ${parsedStartTime}`);
 
-        // Log the milliseconds since epoch for debugging
-        console.log(`Parsed start time (epoch): ${parsedStartTime.getTime()}`);
+        // Convert the parsed time to UTC assuming it's a local time input
+        const utcStartTime = moment(parsedStartTime).utc();
+        console.log(`Parsed start time (UTC): ${utcStartTime.format()}`);
 
         // Adjust the parsed date to the specified time zone using moment-timezone
-        const adjustedStartTime = moment.tz(parsedStartTime, timeZone).toDate();
+        const adjustedStartTime = moment.tz(utcStartTime, timeZone).toDate();
         console.log(`Adjusted start time with time zone (${timeZone}): ${adjustedStartTime}`);
 
         // Check if the final date is a valid date
