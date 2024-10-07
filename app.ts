@@ -58,7 +58,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
   }
   if(interaction.isButton()){
     console.log('Button interaction:', interaction.customId);
-    const matchResult = interaction.customId.match(/^([^\[]+)\[([^\]]+)\]/);
+    const matchResult = interaction.customId.match(/^([^[]+)\[([^\]]+)\]/);
     const buttonAction = matchResult?.[1]; // Text before the brackets
     const groupId = matchResult?.[2]; // Text inside the brackets
     await handleButtonInteraction(buttonAction ?? '', groupId ?? '', interaction.user, client, interaction as ButtonInteraction);

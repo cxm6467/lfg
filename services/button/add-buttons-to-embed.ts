@@ -1,5 +1,4 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from "discord.js";
-import { IGroup } from "../../interfaces";
 import { getMessageByMessageId } from "../../utils";
 import { GroupModel } from "../../models/group";
 

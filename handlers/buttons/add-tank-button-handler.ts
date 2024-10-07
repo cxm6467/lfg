@@ -1,4 +1,4 @@
-import { Client, Embed, Message, User } from "discord.js";
+import { Client, Message, User } from "discord.js";
 import { MemberRole } from "../../enums";
 import { IMember } from "../../interfaces";
 import { GroupModel } from "../../models/group";

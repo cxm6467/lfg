@@ -28,7 +28,7 @@ export const  mentionHelper = (serverId: string, role?: MemberRole, difficulty?:
           // Filter out the provided role and exclude any difficulties
           roleMentions = Object.entries(mentionChoices)
               .filter(([key]) => key.toLowerCase() !== roleKey && Object.values(MemberRole).some(validRole => key.toLowerCase().includes(validRole)))
-              .map(([_, mention]) => mention);
+              .map(([, mention]) => mention);
       } else {
           console.log(`No role mention found for key: ${roleKey}`);
       }

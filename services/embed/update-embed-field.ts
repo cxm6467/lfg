@@ -30,12 +30,12 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
         break;
       case ModalField.StartTime:
         // Convert the value from milliseconds to seconds (if necessary)
-        const secondsValue = Math.floor((value as number) / 1000);
+        { const secondsValue = Math.floor((value as number) / 1000);
         console.log('Setting start time:', secondsValue);
 
         // Use the secondsValue for the Discord timestamp format
         roleField.value = `<t:${secondsValue}:F>`;
-        break;
+        break; }
       case ModalField.Notes:
         roleField.value = value?.toString() ?? '';
         break;
