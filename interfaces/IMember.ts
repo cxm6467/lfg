@@ -1,4 +1,4 @@
-import { MemberRole } from "../enums/";
+import { MemberRole } from '../enums/';
 
 export interface IMember {
   userId?: string;

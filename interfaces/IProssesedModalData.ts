@@ -1,4 +1,4 @@
-import { Message } from "discord.js";
+import { Message } from 'discord.js';
 
 export interface IProssesedModalData {
   groupMessage: Message | undefined;

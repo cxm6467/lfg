@@ -1,4 +1,4 @@
-import { DungeonName, DungeonType } from "../enums/";
+import { DungeonName, DungeonType } from '../enums/';
 
 export interface IDungeon {
   name: DungeonName;
