@@ -5,8 +5,9 @@ import { mongooseConnectionHelper } from './services/mongoose-connection-helper'
 import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
-import { getMessageByMessageId, reactToMessage } from './utils';
+import { getMessageByMessageId, mentionHelper, reactToMessage } from './utils';
 import { ModalField } from './enums';
+import { get } from 'mongoose';
 
 dotenv.config();
 
@@ -54,6 +55,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
+
+		const member = model?.members?.find(m => m.userId === interaction.user.id) ?? null;
+
+		const mentions = await mentionHelper(model?.guildId ?? '', member?.role, model?.dungeon.type);
+		await msg?.reply({ content: mentions?.map(mention => `<@${mention}>`).join(' ') });
 	}
 	if (interaction.isButton()) {
 		console.log('Button interaction:', interaction.customId);
