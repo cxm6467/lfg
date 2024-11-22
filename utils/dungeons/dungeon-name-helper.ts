@@ -12,6 +12,20 @@ export const convertDungeonName = (dungeonName: DungeonName): string => {
 	return url;
 };
 
+export const getEmbedColor = (dungeonName: DungeonName): string => {
+	console.debug(`getEmbedColor called with dungeonName: ${dungeonName}`);
+
+	// Use the dungeon name as the key to get the border color from DUNGEON_URLS
+	const dungeonKey = getDungeonKeyByName(dungeonName);
+	console.debug(`Dungeon key obtained in getEmbedColor: ${dungeonKey}`);
+
+	// Get the border color from the DUNGEON_URLS array, default to '#DCB106' if not found
+	const borderColor = DUNGEON_URLS.find(d => d.key === dungeonKey)?.borderColor ?? '#DCB106';
+	console.debug(`Border color found in getEmbedColor: ${borderColor}`);
+
+	return borderColor;
+};
+
 // Utility function to get the URL directly from the dungeon name
 const getDungeonURL = (dungeonName: DungeonName): string => {
 	console.debug(`getDungeonURL called with dungeonName: ${dungeonName}`);
@@ -20,11 +34,11 @@ const getDungeonURL = (dungeonName: DungeonName): string => {
 	const dungeonKey = getDungeonKeyByName(dungeonName);
 	console.debug(`Dungeon key obtained in getDungeonURL: ${dungeonKey}`);
 
-	// Use the dungeonKey to get the URL from the DUNGEON_URLS enum, default to 'ANY' URL if not found
-	const url = DUNGEON_URLS[dungeonKey] ?? DUNGEON_URLS.ANY;
+	// Use the dungeonKey to get the URL from the DUNGEON_URLS array, default to 'ANY' URL if not found
+	const url = DUNGEON_URLS.find(d => d.key === dungeonKey)?.url ?? DUNGEON_URLS.find(d => d.key === 'ANY')?.url;
 	console.debug(`URL found in getDungeonURL: ${url}`);
 
-	return url;
+	return url ?? '';
 };
 
 // Utility function to get the enum key from the DungeonName value

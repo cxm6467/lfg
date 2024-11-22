@@ -1,6 +1,6 @@
-import { Client, EmbedBuilder, StartThreadOptions } from 'discord.js';
+import { Client, EmbedBuilder, StartThreadOptions, ColorResolvable } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { convertDungeonName as convertDungeonNameToUrl, getMessageByMessageId } from '../../utils';
+import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId } from '../../utils';
 import { MemberRole, ModalField } from '../../enums';
 
 export const addEmbed = async (client: Client, groupId: string) => {
@@ -14,9 +14,11 @@ export const addEmbed = async (client: Client, groupId: string) => {
 
 
 		const thumbnailUrl = convertDungeonNameToUrl(group.dungeon?.name);
+		const embedColor = getEmbedColor(group.dungeon?.name) as ColorResolvable;
 		console.log('Thumbnail URL:', thumbnailUrl, 'Dungeon:', group.dungeon?.name);
 
 		const embed = new EmbedBuilder()
+			.setColor(embedColor)
 			.setThumbnail(thumbnailUrl)
 			.addFields([
 				{

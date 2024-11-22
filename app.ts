@@ -7,7 +7,6 @@ import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
 import { getMessageByMessageId, mentionHelper, reactToMessage } from './utils';
 import { ModalField } from './enums';
-import { get } from 'mongoose';
 
 dotenv.config();
 
