@@ -28,5 +28,5 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
 	embedId: { type: String },
 	startTime: { type: Date },
 	hasLust: { type: Boolean },
-	hasBrez: { type: Boolean },
+	hasBres: { type: Boolean },
 }, { collection: 'group', timestamps: true });

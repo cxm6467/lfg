@@ -5,7 +5,7 @@ import { mongooseConnectionHelper } from './services/mongoose-connection-helper'
 import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
-import { getMessageByMessageId, mentionHelper, reactToMessage } from './utils';
+import { getMessageByMessageId, reactToMessage } from './utils';
 import { ModalField } from './enums';
 
 dotenv.config();
@@ -15,7 +15,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async (readyClient) => {
-	console.log(`Logged in as ${readyClient .user?.tag}`);
+	console.log(`Logged in as ${readyClient.user?.tag}`);
 	await mongooseConnectionHelper();
 	await registerCommands();
 	const groups = await GroupModel.find();
@@ -45,7 +45,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 
 		await model?.updateOne({ messageId: groupMessage?.id });
-		await addEmbed(client, groupId ?? '');
+		await addEmbed(client, groupId ?? '', interaction.user.id);
 		await addEmbedButtons(client, groupId ?? '');
 
 		const msg = await getMessageByMessageId(client, groupMessage?.id ?? '', model?.guildId ?? '', model?.channelId ?? '');
@@ -54,11 +54,6 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
-
-		const member = model?.members?.find(m => m.userId === interaction.user.id) ?? null;
-
-		const mentions = await mentionHelper(model?.guildId ?? '', member?.role, model?.dungeon.type);
-		await msg?.reply({ content: mentions?.map(mention => `<@${mention}>`).join(' ') });
 	}
 	if (interaction.isButton()) {
 		console.log('Button interaction:', interaction.customId);

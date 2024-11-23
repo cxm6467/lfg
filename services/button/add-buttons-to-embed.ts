@@ -35,9 +35,9 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 				.setLabel('Add Bloodlust or similar buff')
 				.setStyle(ButtonStyle.Secondary);
 
-			const addBrez = new ButtonBuilder()
-				.setCustomId(`addBrez[${group.groupId}]`)
-				.setLabel('Add Battle Rez')
+			const addBres = new ButtonBuilder()
+				.setCustomId(`addBres[${group.groupId}]`)
+				.setLabel('Add Battle Res')
 				.setStyle(ButtonStyle.Secondary);
 
 			const clearRole = new ButtonBuilder()
@@ -55,7 +55,7 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 				.addComponents(addDps, addHealer, addTank);
 
 			const rowTwo = new ActionRowBuilder<MessageActionRowComponentBuilder>()
-				.addComponents(addLust, addBrez);
+				.addComponents(addLust, addBres);
 
 			const rowThree = new ActionRowBuilder<MessageActionRowComponentBuilder>()
 				.addComponents(clearRole, markFinished);

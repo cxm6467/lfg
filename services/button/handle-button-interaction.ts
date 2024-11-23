@@ -1,7 +1,7 @@
 import { ButtonInteraction, Client, ThreadChannel, User } from 'discord.js';
 import { GroupModel } from '../../models/group';
 import { getThreadByMessageId } from '../../utils';
-import { addBrezButtonHandler, addDpsButtonHandler, addHealerButtonHandler, addLustButtonHandler, addTankButtonHandler, clearRoleButtonHandler, finishDungeonButtonHandler } from '../../handlers';
+import { addBresButtonHandler, addDpsButtonHandler, addHealerButtonHandler, addLustButtonHandler, addTankButtonHandler, clearRoleButtonHandler, finishDungeonButtonHandler } from '../../handlers';
 
 export const handleButtonInteraction = async (customId: string, groupId:string, user: User, client: Client, interaction:ButtonInteraction) => {
 	console.log(`Button interaction received with customId: ${customId} and groupId: ${groupId}`);
@@ -33,10 +33,10 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
 		await interaction.deferUpdate();
 		console.log('Add Lust button pressed');
 		break;
-	case 'addBrez':
-		if (group && thread) await addBrezButtonHandler(client, groupId, user);
+	case 'addBres':
+		if (group && thread) await addBresButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Brez button pressed');
+		console.log('Add Bres button pressed');
 		break;
 	case 'addFinish':
 		if (group && thread) await finishDungeonButtonHandler(interaction, group, user, thread);

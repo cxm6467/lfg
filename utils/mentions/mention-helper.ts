@@ -1,19 +1,23 @@
-import { SG_DEV_SERVER_ID, SG_PROD_SERVER_ID } from '../../consts';
-import { MemberRole, DungeonType, DEV_MENTION_CHOICES, PROD_MENTION_CHOICES } from '../../enums';
+import { DEV_MENTION_CHOICES, DEV_SERVER_ID, SG_DEV_MENTION_CHOICES, SG_DEV_SERVER_ID, SG_PROD_MENTION_CHOICES, SG_PROD_SERVER_ID } from '../../consts';
+import { MemberRole, DungeonType } from '../../enums';
 
 // Modify the function to use these types
 export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: DungeonType): string[] | null => {
-	console.log(`Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
+	console.log(`Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
 
 	// Determine the mention choices based on the server ID
 	let mentionChoices: Record<string, string> = {};
-	if (String(serverId) === String(SG_DEV_SERVER_ID)) {
+	switch (String(serverId)) {
+	case String(SG_DEV_SERVER_ID):
+		mentionChoices = SG_DEV_MENTION_CHOICES;
+		break;
+	case String(SG_PROD_SERVER_ID):
+		mentionChoices = SG_PROD_MENTION_CHOICES;
+		break;
+	case String(DEV_SERVER_ID):
 		mentionChoices = DEV_MENTION_CHOICES;
-	}
-	else if (String(serverId) === String(SG_PROD_SERVER_ID)) {
-		mentionChoices = PROD_MENTION_CHOICES;
-	}
-	else {
+		break;
+	default:
 		return null;
 	}
 
@@ -22,18 +26,18 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 	let difficultyMentions: string[] = [];
 
 	// If role is provided, check if it's a valid MemberRole
+	console.log(`Role provided: ${role}`);
 	if (role) {
-		const roleKey = `${role.toLowerCase()}_role`;
-		const roleMention = mentionChoices[roleKey];
+		const validRoles = [MemberRole.Tank, MemberRole.Healer, MemberRole.Damage].filter(r => r !== role);
+		console.log(`Roles available: ${validRoles}`);
 
-		if (roleMention) {
+
+		if (validRoles) {
 			// Filter out the provided role and exclude any difficulties
-			roleMentions = Object.entries(mentionChoices)
-				.filter(([key]) => key.toLowerCase() !== roleKey && Object.values(MemberRole).some(validRole => key.toLowerCase().includes(validRole)))
-				.map(([, mention]) => mention);
+			roleMentions = validRoles.map(r => mentionChoices[`${r.toLowerCase()}_role`]).filter(Boolean);
 		}
 		else {
-			console.log(`No role mention found for key: ${roleKey}`);
+			console.log(`No role mentions found for: ${validRoles}`);
 		}
 	}
 

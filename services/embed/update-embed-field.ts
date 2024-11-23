@@ -23,7 +23,7 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 				roleField.value += `\n<@${userId}>`;
 			}
 			break;
-		case PartyBuffs.Brez:
+		case PartyBuffs.Bres:
 			roleField.value = '✅';
 			break;
 		case PartyBuffs.Lust:

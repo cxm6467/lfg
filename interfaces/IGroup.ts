@@ -13,5 +13,5 @@ export interface IGroup {
   messageId?: string;
   embedId?: string;
   hasLust?: boolean;
-  hasBrez?: boolean;
+  hasBres?: boolean;
 }

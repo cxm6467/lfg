@@ -1,9 +1,9 @@
 import { Client, EmbedBuilder, StartThreadOptions, ColorResolvable } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId } from '../../utils';
+import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, mentionHelper } from '../../utils';
 import { MemberRole, ModalField } from '../../enums';
 
-export const addEmbed = async (client: Client, groupId: string) => {
+export const addEmbed = async (client: Client, groupId: string, userId: string) => {
 	const group = await GroupModel.findOne({ groupId });
 
 	if (group?.groupId && group.guildId && group.channelId && group.messageId) {
@@ -48,8 +48,8 @@ export const addEmbed = async (client: Client, groupId: string) => {
 					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
 				},
 				{
-					name: '**Brez**',
-					value: group.hasBrez
+					name: '**Bres**',
+					value: group.hasBres
 						? '✅'
 						: 'None',
 				},
@@ -78,7 +78,15 @@ export const addEmbed = async (client: Client, groupId: string) => {
       } as StartThreadOptions,
 		);
 		await group.updateOne({ embedId: embedMessage?.id, threadId: thread?.id });
-		// console.log('Group updated:', group);
+
+		console.log('Members:', group.members);
+		console.log(`Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`);
+		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
+		// add mentions to thread
+		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
+		console.log('Initial Member Role:', initialMemberRole);
+		console.log('Mentions:', mentions);
+		await thread?.send(`${mentions?.join(' ')}`);
 	}
 	else {
 		console.error('Group not found');
