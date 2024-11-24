@@ -2,8 +2,8 @@ import { ModalSubmitInteraction } from 'discord.js';
 import { GroupModel } from '../../models/group';
 import { parseDate } from 'chrono-node';
 import { IProssesedModalData } from '../../interfaces';
-import moment from 'moment-timezone';
 import { TIME_ZONE_MAPPING } from '../../consts';
+import moment from 'moment-timezone';
 
 export const processModalSubmit = async (interaction: ModalSubmitInteraction): Promise<IProssesedModalData | undefined> => {
 	const { customId, fields } = interaction;
@@ -35,28 +35,28 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 			// Use chrono-node to parse the start time (without timezone info)
 			console.log(`Start time: ${startTime}`);
 			const parsedStartTime = parseDate(startTime);
+			console.log(`Parsed start time: ${parsedStartTime}`);
+			const localeString = moment(parsedStartTime).tz(timeZone).format('YYYY-MM-DDTHH:mm:ss');
+			console.log(`Locale string with options: ${localeString}`);
 
 			// Check if `parsedStartTime` is valid
 			if (parsedStartTime) {
 				console.log(`Parsed start time (local): ${parsedStartTime}`);
 
-				// Convert the parsed time to UTC assuming it's a local time input
-				const utcStartTime = moment(parsedStartTime).utc();
-				console.log(`Parsed start time (UTC): ${utcStartTime.format()}`);
 
 				// Adjust the parsed date to the specified time zone using moment-timezone
-				const adjustedStartTime = moment.tz(utcStartTime, timeZone).toDate();
+				const adjustedStartTime = new Date(localeString ?? 0).getTime();
 				console.log(`Adjusted start time with time zone (${timeZone}): ${adjustedStartTime}`);
 
 				// Check if the final date is a valid date
-				if (isNaN(adjustedStartTime.getTime())) {
+				if (isNaN(new Date(adjustedStartTime).getTime())) {
 					console.error('Invalid date detected after time zone adjustment');
 					return;
 				}
 
 				// Store the adjusted start time in the group
-				group.startTime = adjustedStartTime;
-				epochTimestamp = adjustedStartTime.getTime();
+				group.startTime = new Date (adjustedStartTime);
+				epochTimestamp = adjustedStartTime;
 
 			}
 			else {

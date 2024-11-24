@@ -12,15 +12,15 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
 		if (groupMember) {
 			if (groupMember.role === MemberRole.None) {
-				if ((group.members?.filter(member => member.role === MemberRole.Damage).length ?? 0) <= 2
+				if ((group.members?.filter(member => member.role === MemberRole.Dps).length ?? 0) <= 2
           && (group.members?.filter(member => member.userId !== user?.id).length ?? 0) < 1) {
-					groupMember.role = MemberRole.Damage;
+					groupMember.role = MemberRole.Dps;
 					await group.save();
 					const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
-					await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Damage, user.id);
+					await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
 				}
 				else {
-					await user.send('You can only have 3 DPS roles in a group.');
+					await user.send('You can only have 3 dps roles in a group.');
 				}
 			}
 			else {

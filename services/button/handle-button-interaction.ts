@@ -16,7 +16,7 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
 	case 'addDps':
 		if (group && thread) await addDpsButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Dps button pressed');
+		console.log('Add dps button pressed');
 		break;
 	case 'addHealer':
 		if (group && thread) await addHealerButtonHandler(client, groupId, user);

@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
 import { getMessageByMessageId } from '../../utils';
 import { GroupModel } from '../../models/group';
+import { CustomEmoji } from '../../enums';
 
 export const addEmbedButtons = async (client: Client, groupId: string) => {
 	const group = await GroupModel.findOne({ groupId });;
@@ -17,27 +18,27 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 			// Define the buttons
 			const addDps = new ButtonBuilder()
 				.setCustomId(`addDps[${group.groupId}]`)
-				.setLabel('⚔️')
+				.setLabel(`${CustomEmoji.Dps}`)
 				.setStyle(ButtonStyle.Primary);
 
 			const addHealer = new ButtonBuilder()
 				.setCustomId(`addHealer[${group.groupId}]`)
-				.setLabel('💚')
+				.setLabel(`${CustomEmoji.Healer}`)
 				.setStyle(ButtonStyle.Primary);
 
 			const addTank = new ButtonBuilder()
 				.setCustomId(`addTank[${group.groupId}]`)
-				.setLabel('🛡️')
+				.setLabel(`${CustomEmoji.Tank}`)
 				.setStyle(ButtonStyle.Primary);
 
 			const addLust = new ButtonBuilder()
 				.setCustomId(`addLust[${group.groupId}]`)
-				.setLabel('Add Bloodlust or similar buff')
+				.setLabel(`Add Lust${CustomEmoji.Lust}`)
 				.setStyle(ButtonStyle.Secondary);
 
 			const addBres = new ButtonBuilder()
 				.setCustomId(`addBres[${group.groupId}]`)
-				.setLabel('Add Battle Res')
+				.setLabel(`Add Bres${CustomEmoji.Bres}`)
 				.setStyle(ButtonStyle.Secondary);
 
 			const clearRole = new ButtonBuilder()

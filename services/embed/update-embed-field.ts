@@ -15,7 +15,7 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 		case MemberRole.Healer:
 			roleField.value = `<@${userId}>`;
 			break;
-		case MemberRole.Damage:
+		case MemberRole.Dps:
 			if (roleField.value === 'None') {
 				roleField.value = `<@${userId}>`;
 			}

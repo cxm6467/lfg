@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, StartThreadOptions, ColorResolvable } from 'discord.js';
 import { GroupModel } from '../../models/group';
 import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, mentionHelper } from '../../utils';
-import { MemberRole, ModalField } from '../../enums';
+import { CustomEmoji, MemberRole, ModalField } from '../../enums';
 
 export const addEmbed = async (client: Client, groupId: string, userId: string) => {
 	const group = await GroupModel.findOne({ groupId });
@@ -32,29 +32,29 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 					value: 'None',
 				},
 				{
-					name: `**${MemberRole.Tank}**`,
+					name: `**${MemberRole.Tank}${CustomEmoji.Tank}**`,
 					value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
 						? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>`
 						: 'None'}`,
 				},
 				{
-					name: `**${MemberRole.Healer}**`,
+					name: `**${MemberRole.Healer}${CustomEmoji.Healer}**`,
 					value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
 						? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>`
 						: 'None'}`,
 				},
 				{
-					name: `**${MemberRole.Damage}**`,
-					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Damage).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
+					name: `**${MemberRole.Dps}${CustomEmoji.Dps}**`,
+					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
 				},
 				{
-					name: '**Bres**',
+					name: `**Bres${CustomEmoji.Bres}**`,
 					value: group.hasBres
 						? '✅'
 						: 'None',
 				},
 				{
-					name: '**Lust**',
+					name: `**Lust${CustomEmoji.Lust}**`,
 					value: group.hasLust
 						? '✅'
 						: 'None',

@@ -32,7 +32,7 @@ export const DUNGEON_URLS = [
 export const SG_PROD_MENTION_CHOICES: Record<string, string> = {
 	healer_role: '<@&1281359918330413190>',
 	tank_role: '<@&1281359855885750372>',
-	damage_role: '<@&1281359999662034945>',
+	dps_role: '<@&1281359999662034945>',
 	normal_role: '<@&1281360125419978856>',
 	heroic_role: '<@&1281360082726162560>',
 	mythic_role: ' <@&1281360042117042247>',
@@ -42,7 +42,7 @@ export const SG_PROD_MENTION_CHOICES: Record<string, string> = {
 export const SG_DEV_MENTION_CHOICES: Record<string, string> = {
 	healer_role: '<@&1281358200104423529>',
 	tank_role: '<@&1281358460079833161>',
-	damage_role: '<@&1281358602610937959>',
+	dps_role: '<@&1281358602610937959>',
 	normal_role: '<@&1281358751252877385>',
 	heroic_role: '<@&1281358691915923517>',
 	mythic_role: '<@&1281358645400965180>',
@@ -52,7 +52,7 @@ export const SG_DEV_MENTION_CHOICES: Record<string, string> = {
 export const DEV_MENTION_CHOICES: Record<string, string> = {
 	healer_role: '<@&1309651837305098340>',
 	tank_role: '<@&1309651939553841203>',
-	damage_role: '<@&1309652002007154718>',
+	dps_role: '<@&1309652002007154718>',
 	normal_role: '<@&1309652114481352744>',
 	heroic_role: '<@&1309652087176691814>',
 	mythic_role: '<@&1309652053819392151>',

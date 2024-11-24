@@ -28,7 +28,7 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 	// If role is provided, check if it's a valid MemberRole
 	console.log(`Role provided: ${role}`);
 	if (role) {
-		const validRoles = [MemberRole.Tank, MemberRole.Healer, MemberRole.Damage].filter(r => r !== role);
+		const validRoles = [MemberRole.Tank, MemberRole.Healer, MemberRole.Dps].filter(r => r !== role);
 		console.log(`Roles available: ${validRoles}`);
 
 

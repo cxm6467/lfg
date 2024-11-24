@@ -1,6 +1,6 @@
 export enum MemberRole{
   Tank = 'Tank',
   Healer = 'Healer',
-  Damage = 'Damage',
+  Dps = 'Dps',
   None = 'None'
 }
