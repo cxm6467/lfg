@@ -7,6 +7,7 @@ import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
 import { getMessageByMessageId, reactToMessage } from './utils';
 import { ModalField } from './enums';
+import { deleteAndCloseThread } from './utils/tasks';
 
 dotenv.config();
 
@@ -64,5 +65,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	}
 
 });
+
+setInterval(async () => {
+	try {
+		await deleteAndCloseThread(client);
+		console.log('Successfully deleted and closed threads');
+	}
+	catch (error) {
+		console.error('Error deleting and closing threads:', error);
+	}
+}, 300000);
 
 client.login(process.env.DISCORD_BOT_TOKEN!);
