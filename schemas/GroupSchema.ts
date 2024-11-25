@@ -29,4 +29,5 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
 	startTime: { type: Date },
 	hasLust: { type: Boolean },
 	hasBres: { type: Boolean },
+	archived: { type: Boolean, default: false },
 }, { collection: 'group', timestamps: true });

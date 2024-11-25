@@ -41,6 +41,8 @@
     "chrono-node": "^2.7.7",
     "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",
+    "l": "^0.6.0",
+    "luxon": "^3.5.0",
     "moment-timezone": "^0.5.45",
     "mongoose": "^8.6.2",
     "ts-node": "^10.9.2",
@@ -49,6 +51,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
+    "@types/luxon": "^3.4.2",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",

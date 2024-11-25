@@ -33,7 +33,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		}
 		const embed: Embed = embedMessage.embeds[0];
 		const roleField = embed.fields.find(field => field.name.replace(/\*/g, '').trim() === originalRole.replace(/\*/g, '').trim());
-		// console.log(embed.fields)
+		console.log(embed.fields);
 		console.log('Original role:', originalRole);
 		console.log('Role field:', roleField);
 		if (roleField && roleField.value.includes(`<@${user.id}>`)) {

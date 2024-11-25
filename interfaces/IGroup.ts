@@ -14,4 +14,5 @@ export interface IGroup {
   embedId?: string;
   hasLust?: boolean;
   hasBres?: boolean;
+  archived?: boolean;
 }

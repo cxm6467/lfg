@@ -3,7 +3,7 @@ import { GroupModel } from '../../models/group';
 import { parseDate } from 'chrono-node';
 import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
-import moment from 'moment-timezone';
+import { DateTime } from 'luxon';
 
 export const processModalSubmit = async (interaction: ModalSubmitInteraction): Promise<IProssesedModalData | undefined> => {
 	const { customId, fields } = interaction;
@@ -34,10 +34,8 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		if (group) {
 			// Use chrono-node to parse the start time (without timezone info)
 			console.log(`Start time: ${startTime}`);
-			const parsedStartTime = parseDate(startTime);
-			console.log(`Parsed start time: ${parsedStartTime}`);
-			const localeString = moment(parsedStartTime).tz(timeZone).format('YYYY-MM-DDTHH:mm:ss');
-			console.log(`Locale string with options: ${localeString}`);
+			const parsedStartTime = DateTime.fromJSDate(parseDate(startTime) ?? new Date());
+
 
 			// Check if `parsedStartTime` is valid
 			if (parsedStartTime) {
@@ -45,17 +43,17 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 
 
 				// Adjust the parsed date to the specified time zone using moment-timezone
-				const adjustedStartTime = new Date(localeString ?? 0).getTime();
+				const adjustedStartTime = parsedStartTime.setZone('America/New_York');
 				console.log(`Adjusted start time with time zone (${timeZone}): ${adjustedStartTime}`);
 
 				// Check if the final date is a valid date
-				if (isNaN(new Date(adjustedStartTime).getTime())) {
+				if (isNaN(adjustedStartTime.toUnixInteger())) {
 					console.error('Invalid date detected after time zone adjustment');
 					return;
 				}
 
 				// Store the adjusted start time in the group
-				group.startTime = new Date (adjustedStartTime);
+				group.startTime = adjustedStartTime.toJSDate();
 				epochTimestamp = adjustedStartTime;
 
 			}
@@ -83,3 +81,4 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		console.log('Group ID not found in customId');
 	}
 };
+

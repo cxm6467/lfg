@@ -4,6 +4,7 @@ import { MemberRole, ModalField, PartyBuffs } from '../../enums';
 export const updateEmbedField = async (message: Message|undefined, field: MemberRole | PartyBuffs | ModalField, userId: string, value?: string|number) => {
 	const embed = message?.embeds[0];
 
+	console.log('Embed fields:', embed?.fields);
 	const roleField = embed?.fields.find(x => x.name.replace(/\*/g, '').trim() === field.toString().replace(/ /g, ''));
 	console.log('Role field:', roleField);
 

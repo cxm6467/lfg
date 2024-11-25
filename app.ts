@@ -7,7 +7,7 @@ import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
 import { getMessageByMessageId, reactToMessage } from './utils';
 import { ModalField } from './enums';
-import { deleteAndCloseThread } from './utils/tasks';
+import { archiveAndDeleteThreadAndEmbed } from './utils/tasks';
 
 dotenv.config();
 
@@ -68,7 +68,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 setInterval(async () => {
 	try {
-		await deleteAndCloseThread(client);
+		await archiveAndDeleteThreadAndEmbed(client);
 		console.log('Successfully deleted and closed threads');
 	}
 	catch (error) {
