@@ -33,7 +33,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
 	if (interaction.isModalSubmit()) {
 		const groupId = interaction.customId.match(/\[(.*?)\]/)?.[1];
 		const model = await GroupModel.findOne({ groupId });
-		const modalData = await processModalSubmit(interaction);
+		let modalData;
+		try {
+			modalData = await processModalSubmit(interaction);
+		}
+		catch (error) {
+			logger(LogLevel.ERROR, `Error processing modal submit: ${(error as Error).message}`);
+			return;
+		}
 		if (!modalData) {
 			logger(LogLevel.ERROR, 'Failed to process modal submit');
 			return;

@@ -50,11 +50,10 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 			roleField.value = '✅';
 			break;
 		case ModalField.StartTime:
-		{ const secondsValue = Math.floor((value as number) / 1000);
-			logger(LogLevel.INFO, `Setting start time: ${secondsValue}`);
+			logger(LogLevel.INFO, `Setting start time: ${value as number}`);
 
-			roleField.value = `<t:${secondsValue}:F>`;
-			break; }
+			roleField.value = `<t:${value as number}:F>`;
+			break;
 		case ModalField.Notes:
 			roleField.value = value?.toString() ?? '';
 			break;

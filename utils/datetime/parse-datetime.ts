@@ -1,39 +1,82 @@
-/* eslint-disable no-multi-spaces */
-/* eslint-disable no-inline-comments */
 import { DateTime } from 'luxon';
+import { TIME_ZONE_MAPPING } from '../../consts';
+import { logger } from '../../utils/logger';
+import { LogLevel } from '../../enums';
 
 /**
- * Parses a date-time string into a DateTime object using various formats and time zones.
+ * Parses a datetime string in the provided time zone and returns a Discord timestamp.
  *
- * @param input - The date-time string to parse.
- * @param timeZone - The time zone to use for parsing.
- * @returns A DateTime object representing the parsed date-time.
- * @throws Will throw an error if the input string does not match any of the expected formats.
+ * @param {string} dungeonDatetimeStr - The input datetime string.
+ * @param {string} timeZone - The input time zone (e.g., "PST", "America/New_York").
+ * @returns {string} - A Discord timestamp in the format `<t:unix:F>`.
  */
-export const parseDateTime = (input: string, timeZone: string): DateTime => {
-	const possibleFormats = [
-		'MM/dd/yyyy h:mm a',    // e.g., 12/01/2024 1:00 PM
-		'yyyy-MM-dd HH:mm',     // e.g., 2024-12-01 13:00
-		'MMMM d, yyyy h:mm a',  // e.g., December 1, 2024 1:00 PM
-		'MM/dd/yyyy HH:mm',     // e.g., 12/01/2024 13:00
-	];
+export const formatDungeonDateTime = async (dungeonDatetimeStr: string, timeZone: string = 'America/New_York') => {
+	logger(LogLevel.DEBUG, `Received input datetime string: '${dungeonDatetimeStr}', time zone: ${timeZone}`);
 
-	for (const format of possibleFormats) {
-		const dateTime = DateTime.fromFormat(input, format, { zone: timeZone });
-		if (dateTime.isValid) {
-			return dateTime;
-		}
+	const tzName = TIME_ZONE_MAPPING[timeZone.toUpperCase()] || timeZone;
+	if (!DateTime.local().setZone(tzName).isValid) {
+		const error = `Invalid time zone code: ${timeZone}. Use valid IANA time zones.`;
+		logger(LogLevel.ERROR, error);
+		return '<t:0:F>';
 	}
 
-	const isoDateTime = DateTime.fromISO(input, { zone: timeZone });
-	if (isoDateTime.isValid) {
-		return isoDateTime;
+	try {
+		const unixTimestamp = parseAndConvertToUnix(dungeonDatetimeStr, tzName);
+		return unixTimestamp > 0 ? `<t:${unixTimestamp}:F>` : '<t:0:F>';
+	}
+	catch (error) {
+		logger(LogLevel.ERROR, `Error formatting datetime string: ${(error as Error).message}`);
+		return '<t:0:F>';
+	}
+};
+
+/**
+ * Parses a datetime string in the provided time zone and returns a Unix timestamp.
+ *
+ * @param {string} dungeonDatetimeStr - The input datetime string.
+ * @param {string} timeZone - The input time zone (e.g., "PST", "America/New_York").
+ * @returns {number} - The Unix timestamp, or 0 on failure.
+ */
+export const getUnixTimestamp = (dungeonDatetimeStr: string, timeZone: string = 'America/New_York'): number => {
+	logger(LogLevel.DEBUG, `Received input datetime string: '${dungeonDatetimeStr}', time zone: ${timeZone}`);
+
+	const tzName = TIME_ZONE_MAPPING[timeZone.toUpperCase()] || timeZone;
+
+	try {
+		return parseAndConvertToUnix(dungeonDatetimeStr, tzName);
+	}
+	catch (error) {
+		logger(LogLevel.ERROR, `Error parsing datetime string: ${(error as Error).message}`);
+		return 0;
+	}
+};
+
+/**
+ * Helper function to parse a datetime string and convert it to a Unix timestamp.
+ *
+ * @param {string} datetimeStr - The input datetime string.
+ * @param {string} timeZone - The input time zone (IANA-compatible string).
+ * @returns {number} - The Unix timestamp, or 0 on failure.
+ */
+const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number => {
+	if (!datetimeStr || datetimeStr.trim() === '') {
+		throw new Error('Invalid datetime input: The datetime string is empty or undefined.');
 	}
 
-	const fallbackDateTime = DateTime.fromJSDate(new Date(input), { zone: timeZone });
-	if (fallbackDateTime.isValid) {
-		return fallbackDateTime;
+	const normalizedInput = datetimeStr.trim();
+	logger(LogLevel.DEBUG, `Normalized datetime string: '${normalizedInput}'`);
+
+	const parsedDate = DateTime.fromFormat(normalizedInput, 'MM/dd/yyyy h:mm a', { zone: timeZone });
+
+	if (!parsedDate.isValid) {
+		throw new Error(`Invalid date: Could not parse '${normalizedInput}' into a valid DateTime object.`);
 	}
 
-	throw new Error(`Invalid date/time format: ${input}`);
+	logger(LogLevel.DEBUG, `Parsed DateTime (time zone applied): ${parsedDate.toString()}`);
+
+	const utcDate = parsedDate.toUTC();
+	const unixTimestamp = Math.floor(utcDate.toSeconds());
+
+	logger(LogLevel.DEBUG, `UTC DateTime: ${utcDate.toString()}, Unix timestamp: ${unixTimestamp}`);
+	return unixTimestamp;
 };

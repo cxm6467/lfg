@@ -3,7 +3,7 @@ import { GroupModel } from '../../models/group';
 import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
 import { LogLevel } from '../../enums';
-import { logger, parseDateTime } from '../../utils';
+import { formatDungeonDateTime, getUnixTimestamp, logger } from '../../utils';
 
 /**
  * Processes the modal submit interaction from Discord.
@@ -47,34 +47,33 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 
 	try {
 		logger(LogLevel.INFO, `Parsing start time: ${startTime}`);
-		const parsedDateTime = parseDateTime(startTime, timeZone);
+		const parsedDateTime = await formatDungeonDateTime(startTime, timeZone);
 
 		logger(LogLevel.INFO, `Successfully parsed start time: ${parsedDateTime.toString()}`);
 
-		const mongoTimestamp = parsedDateTime.toJSDate();
-		const discordTimestamp = `<t:${parsedDateTime.toSeconds()}:F>`;
+		const mongoTimestamp = getUnixTimestamp(startTime, timeZone);
 
-		logger(LogLevel.INFO, `MongoDB timestamp: ${mongoTimestamp}`);
-		logger(LogLevel.INFO, `Discord timestamp: ${discordTimestamp}`);
+		logger(LogLevel.INFO, `MongoDB timestamp: ${new Date(mongoTimestamp)}`);
+		logger(LogLevel.INFO, `Discord timestamp: ${parsedDateTime}`);
 
-		group.startTime = mongoTimestamp;
+		group.startTime = new Date(mongoTimestamp);
 		group.notes = notes;
 		await group.save();
 
 		const groupMessage = await interaction.reply({
-			content: `Submission processed! Group start time: ${discordTimestamp}`,
+			content: `Submission processed! Group start time: ${parsedDateTime}`,
 			fetchReply: true,
 		});
 
 		return {
 			groupMessage,
-			epochTimestamp: mongoTimestamp.getTime(),
+			epochTimestamp: mongoTimestamp,
 			timeZone,
 			notes,
 		} as IProssesedModalData;
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error processing modal submit: ${JSON.stringify(error)}`);
+		logger(LogLevel.ERROR, `Error processing modal submit: ${error as Error}`);
 		return;
 	}
 };
