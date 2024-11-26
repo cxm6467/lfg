@@ -3,6 +3,27 @@ import { GroupModel } from '../../models/group';
 import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, logger, mentionHelper } from '../../utils';
 import { LogLevel, MemberRole, ModalField } from '../../enums';
 
+/**
+ * Adds an embed to a specified group message and starts a thread for the group.
+ *
+ * @param client - The Discord client instance.
+ * @param groupId - The ID of the group to which the embed will be added.
+ * @param userId - The ID of the user initiating the embed addition.
+ *
+ * @returns A promise that resolves when the embed and thread have been successfully created and updated.
+ *
+ * The function performs the following steps:
+ * 1. Finds the group by its ID.
+ * 2. Retrieves the message associated with the group.
+ * 3. Constructs an embed with group details such as dungeon name, roles, and notes.
+ * 4. Edits the message to include the new embed.
+ * 5. Starts a private thread for the group.
+ * 6. Updates the group document with the embed and thread IDs.
+ * 7. Logs relevant information for debugging purposes.
+ * 8. Sends a mention message in the thread based on the initial member role and dungeon type.
+ *
+ * If the group is not found, a warning is logged.
+ */
 export const addEmbed = async (client: Client, groupId: string, userId: string) => {
 	const group = await GroupModel.findOne({ groupId });
 
@@ -62,10 +83,7 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 				},
 			]);
 
-		// logger('Embed created:', embed);
-
 		const embedMessage = await msg?.edit({ embeds: [embed] });
-		// logger('Embed message edited:', embedMessage);
 		const thread = await msg?.startThread(
       {
       	name: group.groupName || 'Group Name',
@@ -79,7 +97,7 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		logger(LogLevel.INFO, `Members: ${group.members}`);
 		logger(LogLevel.INFO, `Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`);
 		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
-		// add mentions to thread
+
 		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
 		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`);
 		logger(LogLevel.INFO, `Mentions: ${mentions}`);

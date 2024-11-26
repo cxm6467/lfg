@@ -2,6 +2,16 @@ import { ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, ChatI
 import { IGroup } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 
+/**
+ * Adds a modal for a group interaction.
+ *
+ * This function creates a modal with inputs for start time, timezone, and optional notes.
+ * It then displays the modal to the user and creates a new group in the database.
+ *
+ * @param {ChatInputCommandInteraction} interaction - The interaction that triggered the command.
+ * @param {IGroup} group - The group information to be used in the modal.
+ * @returns {Promise<void>} A promise that resolves when the modal is shown and the group is created.
+ */
 export const addModal = async (interaction: ChatInputCommandInteraction, group:IGroup) => {
 	const dateInput = new TextInputBuilder()
 		.setCustomId('start-time')

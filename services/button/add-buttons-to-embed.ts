@@ -1,3 +1,8 @@
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
+import { getMessageByMessageId, logger } from '../../utils';
+import { GroupModel } from '../../models/group';
+import { CustomEmoji, LogLevel } from '../../enums';
+
 /**
  * Adds interactive buttons to an existing embed message in a Discord channel.
  *
@@ -12,12 +17,6 @@
  *
  * @throws Will log an error message if the group, embed message, or required IDs are not found.
  */
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
-import { getMessageByMessageId, logger } from '../../utils';
-import { GroupModel } from '../../models/group';
-import { CustomEmoji, LogLevel } from '../../enums';
-
-
 export const addEmbedButtons = async (client: Client, groupId: string) => {
 	const group = await GroupModel.findOne({ groupId });
 

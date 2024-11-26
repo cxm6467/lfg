@@ -1,3 +1,9 @@
+import { Client, Message, User } from 'discord.js';
+import { updateEmbedField } from '../../services';
+import { getMessageByMessageId, logger } from '../../utils';
+import { GroupModel } from '../../models/group';
+import { LogLevel, PartyBuffs } from '../../enums';
+
 /**
  * Handles the addition of a battle resurrection (Bres) button for a group.
  *
@@ -16,13 +22,6 @@
  *
  * If the group is not found, it logs an error message to the console.
  */
-import { Client, Message, User } from 'discord.js';
-import { updateEmbedField } from '../../services';
-import { getMessageByMessageId, logger } from '../../utils';
-import { GroupModel } from '../../models/group';
-import { LogLevel, PartyBuffs } from '../../enums';
-
-
 export const addBresButtonHandler = async (client: Client, groupId: string, user:User) => {
 	const group = await GroupModel.findOne({ groupId });
 

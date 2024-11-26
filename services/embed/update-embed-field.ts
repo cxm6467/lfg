@@ -2,6 +2,24 @@ import { Message } from 'discord.js';
 import { LogLevel, MemberRole, ModalField, PartyBuffs } from '../../enums';
 import { logger } from '../../utils';
 
+/**
+ * Updates a specific field in an embed message.
+ *
+ * @param {Message | undefined} message - The message containing the embed to update.
+ * @param {MemberRole | PartyBuffs | ModalField} field - The field to update in the embed.
+ * @param {string} userId - The ID of the user to mention or associate with the field.
+ * @param {string | number} [value] - The value to set for the field, if applicable.
+ *
+ * @returns {Promise<void>} A promise that resolves when the embed has been updated.
+ *
+ * @example
+ * // Update the Tank role field with a user mention
+ * await updateEmbedField(message, MemberRole.Tank, '1234567890');
+ *
+ * @example
+ * // Update the start time field with a timestamp
+ * await updateEmbedField(message, ModalField.StartTime, '1234567890', Date.now());
+ */
 export const updateEmbedField = async (message: Message|undefined, field: MemberRole | PartyBuffs | ModalField, userId: string, value?: string|number) => {
 	const embed = message?.embeds[0];
 
@@ -32,11 +50,9 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 			roleField.value = '✅';
 			break;
 		case ModalField.StartTime:
-		// Convert the value from milliseconds to seconds (if necessary)
 		{ const secondsValue = Math.floor((value as number) / 1000);
 			logger(LogLevel.INFO, `Setting start time: ${secondsValue}`);
 
-			// Use the secondsValue for the Discord timestamp format
 			roleField.value = `<t:${secondsValue}:F>`;
 			break; }
 		case ModalField.Notes:

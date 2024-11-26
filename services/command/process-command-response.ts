@@ -4,6 +4,15 @@ import { addModal } from '../modal/add-modal';
 import { DungeonName, DungeonType, MemberRole } from '../../enums';
 import { ChatInputCommandInteraction } from 'discord.js';
 
+/**
+ * Processes the interaction response for a chat input command.
+ *
+ * This function extracts the options from the interaction, constructs a group object,
+ * and adds a modal for the interaction.
+ *
+ * @param interaction - The interaction object from the chat input command.
+ * @returns A promise that resolves when the modal has been added.
+ */
 export const processInteractionResponse = async (interaction: ChatInputCommandInteraction) => {
 
 	const difficulty = interaction.options.get('difficulty')?.value;

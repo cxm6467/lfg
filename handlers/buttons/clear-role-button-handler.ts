@@ -49,8 +49,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		}));
 
 		await group.save();
-		// update embed
-		// get message for embed
+
 		const embedMessage = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
 		if (!embedMessage) {
 			await user.send('The message for the embed could not be found.');

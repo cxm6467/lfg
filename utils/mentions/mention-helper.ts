@@ -45,7 +45,6 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 		}
 	}
 
-	// If difficulty is provided, check if it's a valid DungeonType
 	if (difficulty) {
 		const difficultyKey = `${difficulty.toLowerCase()}_role`;
 		const difficultyMention = mentionChoices[difficultyKey];

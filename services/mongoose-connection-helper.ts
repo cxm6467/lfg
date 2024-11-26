@@ -1,5 +1,7 @@
 import mongoose, { Mongoose } from 'mongoose';
 import dotenv from 'dotenv';
+import { LogLevel } from '../enums';
+import { logger } from '../utils';
 
 // Load environment variables from .env file
 dotenv.config();
@@ -10,7 +12,7 @@ export const mongooseConnectionHelper = async () => {
 	const mongoUri = process.env.PROD_MONGO_URI;
 
 	if (!mongoUri) {
-		logger('PROD_MONGO_URI is not defined in the .env file');
+		logger(LogLevel.ERROR, 'PROD_MONGO_URI is not defined in the .env file');
 		process.exit(1);
 	}
 
@@ -21,10 +23,10 @@ export const mongooseConnectionHelper = async () => {
 				serverSelectionTimeoutMS: 3000,
 			},
 		);
-		logger('Successfully connected to MongoDB');
+		logger(LogLevel.INFO, 'Successfully connected to MongoDB');
 		return conn;
 	}
 	catch (error) {
-		logger('Error connecting to MongoDB:', error);
+		logger(LogLevel.ERROR, `Error connecting to MongoDB: ${error}');`);
 	}
 };
