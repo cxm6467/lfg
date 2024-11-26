@@ -17,5 +17,7 @@ COPY . .
 # Expose the port that your application listens on
 EXPOSE 3000
 
+ENV FORCE_COLOR=1
+
 # Run the handler function in the app.ts file
 CMD ["npx", "ts-node", "app.ts"]

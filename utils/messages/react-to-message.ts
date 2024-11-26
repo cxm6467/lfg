@@ -22,6 +22,6 @@ export const reactToMessage = async (client: Client, group: IGroup) => {
 		}
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error reacting to message in guild ${group.guildId}: ${error}`);
+		logger(LogLevel.ERROR, `Error reacting to message in guild ${group.guildId}: ${JSON.stringify(error)}`);
 	}
 };

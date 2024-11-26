@@ -8,23 +8,23 @@ import chalk from 'chalk';
  * @param {string} msg - The message to log.
  */
 export const logger = (level: LogLevel, msg: string) => {
-	const prefix = `[${new Date().getTime()}]:`;
+	const prefix = `[${new Date().toISOString()} `;
 
 	switch (level) {
 	case LogLevel.DEBUG:
-		console.log(chalk.cyan(`${prefix} [DEBUG]: ${msg}`));
+		console.log(chalk.magenta(`${prefix}| DEBUG]: ${msg}`));
 		break;
 	case LogLevel.INFO:
-		console.log(chalk.white(`${ prefix } [INFO]: ${ msg }`));
+		console.log(chalk.grey(`${ prefix }| INFO]: ${ msg }`));
 		break;
 	case LogLevel.WARN:
-		console.log(chalk.yellow`${ prefix } [WARN]: ${ msg }`);
+		console.log(chalk.yellow`${ prefix }| WARN]: ${ msg }`);
 		break;
 	case LogLevel.ERROR:
-		console.log(chalk.red(`${ prefix } [ERROR]: ${ msg }`));
+		console.log(chalk.red(`${ prefix }| ERROR]: ${ msg }`));
 		break;
 	default:
-		console.log(chalk.grey(`${ prefix } INFO: ${ msg }`));
+		console.log(chalk.bgBlue(`${ prefix }| LOG]: ${ msg }`));
 		break;
 	}
 };

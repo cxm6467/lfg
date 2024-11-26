@@ -23,7 +23,7 @@ import { logger } from '../../utils';
 export const updateEmbedField = async (message: Message|undefined, field: MemberRole | PartyBuffs | ModalField, userId: string, value?: string|number) => {
 	const embed = message?.embeds[0];
 
-	logger(LogLevel.DEBUG, `Embed fields: ${embed?.fields}`);
+	logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed?.fields)}`);
 	const roleField = embed?.fields.find(x => x.name.replace(/\*/g, '').trim() === field.toString().replace(/ /g, ''));
 	logger(LogLevel.DEBUG, `Role field: ${roleField}`);
 

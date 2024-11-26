@@ -59,9 +59,9 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 
 	const mentionsToReturn = [...roleMentions, ...difficultyMentions];
 
-	logger(LogLevel.INFO, `Filtered role mentions (excluding the provided role and difficulties): ${roleMentions}`);
-	logger(LogLevel.INFO, `Difficulty mentions: ${difficultyMentions}`);
-	logger(LogLevel.INFO, `Combined mentions: ${mentionsToReturn}`);
+	logger(LogLevel.INFO, `Filtered role mentions (excluding the provided role and difficulties): ${JSON.stringify(roleMentions)}`);
+	logger(LogLevel.INFO, `Difficulty mentions: ${JSON.stringify(difficultyMentions)}`);
+	logger(LogLevel.INFO, `Combined mentions: ${JSON.stringify(mentionsToReturn)}`);
 
 	return mentionsToReturn;
 };

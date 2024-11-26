@@ -19,7 +19,7 @@ client.once(Events.ClientReady, async (readyClient) => {
 	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`);
 	await mongooseConnectionHelper();
 	await registerCommands();
-	const groups = await GroupModel.find();
+	const groups = await GroupModel.find({ archived: { $ne: true } });
 	for (const group of groups) {
 		await reactToMessage(client, group);
 	}
@@ -71,7 +71,7 @@ setInterval(async () => {
 		logger(LogLevel.INFO, 'Successfully deleted and closed threads');
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error deleting and closing threads: ${error}`);
+		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
 	}
 }, 300000);
 

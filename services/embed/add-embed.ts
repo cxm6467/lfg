@@ -94,13 +94,13 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		);
 		await group.updateOne({ embedId: embedMessage?.id, threadId: thread?.id });
 
-		logger(LogLevel.INFO, `Members: ${group.members}`);
+		logger(LogLevel.INFO, `Members: ${JSON.stringify(group.members)}`);
 		logger(LogLevel.INFO, `Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`);
 		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
 
 		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
 		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`);
-		logger(LogLevel.INFO, `Mentions: ${mentions}`);
+		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`);
 		await thread?.send(`${mentions?.join(' ')}`);
 	}
 	else {

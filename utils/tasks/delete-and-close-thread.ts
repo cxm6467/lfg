@@ -44,7 +44,7 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 					logger(LogLevel.INFO, `Deleted thread: ${group.threadId}`);
 				}
 				catch (error) {
-					logger(LogLevel.ERROR, `Failed to delete thread: ${group.threadId}:  ${error}`);
+					logger(LogLevel.ERROR, `Failed to delete thread: ${group.threadId}:  ${JSON.stringify(error)}`);
 				}
 			}
 			else {
@@ -58,7 +58,7 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 					logger(LogLevel.INFO, `Deleted embed: ${group.embedId}`);
 				}
 				catch (error) {
-					logger(LogLevel.ERROR, `Failed to delete embed: ${group.embedId}:  ${error}`);
+					logger(LogLevel.ERROR, `Failed to delete embed: ${group.embedId}:  ${JSON.stringify(error)}`);
 				}
 			}
 			else {
@@ -89,7 +89,7 @@ export const finishGroup = async (client: Client, groupId:string) => {
 
 	if (!group) {logger(LogLevel.WARN, `Group with id ${groupId} not found`);}
 
-	else {
+	else if (group.members && group.members.some(m => m.userId === client.user?.id)) {
 		const thread = await getThreadByMessageId(client, group.threadId ?? '');
 		const embed = await getMessageByMessageId(client, group.embedId ?? '', group.guildId ?? '', group.channelId ?? '');
 
@@ -100,7 +100,7 @@ export const finishGroup = async (client: Client, groupId:string) => {
 				logger(LogLevel.INFO, `Deleted thread: ${group.threadId}`);
 			}
 			catch (error) {
-				logger(LogLevel.ERROR, `Failed to delete thread: ${group.threadId}: ${error}`);
+				logger(LogLevel.ERROR, `Failed to delete thread: ${group.threadId}: ${JSON.stringify(error)}`);
 			}
 		}
 		else {
@@ -114,12 +114,16 @@ export const finishGroup = async (client: Client, groupId:string) => {
 				logger(LogLevel.INFO, `Deleted embed: ${group.embedId}`);
 			}
 			catch (error) {
-				logger(LogLevel.ERROR, `Failed to delete embed: ${group.embedId}:  ${error}`);
+				logger(LogLevel.ERROR, `Failed to delete embed: ${group.embedId}:  ${JSON.stringify(error)}`);
 			}
 		}
 		else {
 			logger(LogLevel.WARN, `Embed not found: ${group.embedId}`);
 		}
+	}
+	else {
+		logger(LogLevel.WARN, `Client ${client.user} user not found in group ${groupId}`);
+		client.user?.send('You are not in this group');
 	}
 };
 

@@ -13,7 +13,7 @@ import { logger } from '../logger';
 export const getThreadByMessageId = async (client: Client, threadId: string) => {
 	try {
 		const channel = await client.channels.fetch(threadId);
-		logger(LogLevel.INFO, 'Channel: ${channel}');
+		logger(LogLevel.INFO, `Channel: ${JSON.stringify(channel)}`);
 		if (channel && channel.isThread()) {
 			return channel;
 		}
@@ -22,6 +22,6 @@ export const getThreadByMessageId = async (client: Client, threadId: string) => 
 		}
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error fetching thread with id ${threadId}: ${error}`);
+		logger(LogLevel.ERROR, `Error fetching thread with id ${threadId}: ${JSON.stringify(error)}`);
 	}
 };

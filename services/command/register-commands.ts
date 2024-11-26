@@ -15,6 +15,6 @@ export const registerCommands = async () => {
 
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `${error}`);
+		logger(LogLevel.ERROR, `${JSON.stringify(error)}`);
 	}
 };

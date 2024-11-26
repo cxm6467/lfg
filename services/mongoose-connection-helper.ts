@@ -27,6 +27,6 @@ export const mongooseConnectionHelper = async () => {
 		return conn;
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error connecting to MongoDB: ${error}');`);
+		logger(LogLevel.ERROR, `Error connecting to MongoDB: ${JSON.stringify(error)}');`);
 	}
 };

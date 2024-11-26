@@ -66,6 +66,6 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 		}
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `An error occurred while fetching the message: ${error}`);
+		logger(LogLevel.ERROR, `An error occurred while fetching the message: ${JSON.stringify(error)}`);
 	}
 };
