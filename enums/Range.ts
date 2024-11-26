@@ -1,3 +1,4 @@
+// Level choices for the type of dungeon
 export const RangeChoices = [
 	{ name: 'N/A', value: 'N/A' },
 	{ name: '0', value: '0' },

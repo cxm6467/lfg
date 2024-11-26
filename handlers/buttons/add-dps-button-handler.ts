@@ -4,6 +4,23 @@ import { GroupModel } from '../../models/group';
 import { getMessageByMessageId } from '../../utils';
 import { MemberRole } from '../../enums';
 import { updateEmbedField } from '../../services';
+
+/**
+ * Handles the addition of a DPS role to a user in a group when the corresponding button is pressed.
+ *
+ * @param client - The Discord client instance.
+ * @param groupId - The ID of the group to which the user is being added.
+ * @param user - The Discord user who is being assigned the DPS role.
+ *
+ * @returns A promise that resolves when the operation is complete.
+ *
+ * @remarks
+ * - The function checks if the group exists and if the user is a member of the group.
+ * - If the user is already a member and has no role, it assigns the DPS role to the user.
+ * - The function ensures that there are no more than 3 DPS roles in the group.
+ * - If the user already has a role or if the DPS role limit is reached, the user is notified via a direct message.
+ * - If the group or user is not found, appropriate messages are logged to the console.
+ */
 export const addDpsButtonHandler = async (client: Client, groupId: string, user: User) => {
 
 	const group = await GroupModel.findOne({ groupId });

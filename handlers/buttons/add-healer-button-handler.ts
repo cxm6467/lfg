@@ -5,6 +5,22 @@ import { GroupModel } from '../../models/group';
 import { getMessageByMessageId } from '../../utils';
 import { updateEmbedField } from '../../services';
 
+/**
+ * Handles the addition of a healer to a group when the corresponding button is pressed.
+ *
+ * @param client - The Discord client instance.
+ * @param groupId - The ID of the group to which the healer is to be added.
+ * @param user - The Discord user who pressed the button.
+ *
+ * @returns A promise that resolves when the handler has completed its operations.
+ *
+ * @remarks
+ * - If the group is found and the user is a member of the group with no role, the user is assigned the healer role if no other healer exists in the group.
+ * - If the user already has a role, a message is sent to the user indicating that they already have a role.
+ * - If another healer already exists in the group, a message is sent to the user indicating that only one healer is allowed.
+ * - If the user is not found in the group, a log message is generated.
+ * - If the group is not found, a log message is generated.
+ */
 export const addHealerButtonHandler = async (client: Client, groupId: string, user: User) => {
 	const group = await GroupModel.findOne({ groupId });
 

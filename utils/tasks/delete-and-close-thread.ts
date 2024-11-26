@@ -52,6 +52,45 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 	});
 };
 
+export const finishGroup = async (client: Client, groupId:string) => {
+	const group = await GroupModel.findOne({ groupId });
+
+	if (!group) {console.error(`Group with id ${groupId} not found`);}
+
+	else {
+		const thread = await getThreadByMessageId(client, group.threadId ?? '');
+		const embed = await getMessageByMessageId(client, group.embedId ?? '', group.guildId ?? '', group.channelId ?? '');
+
+		if (thread) {
+			try {
+				console.log(`Attempting to delete thread: ${group.threadId}`);
+				await thread.delete();
+				console.log(`Deleted thread: ${group.threadId}`);
+			}
+			catch (error) {
+				console.error(`Failed to delete thread: ${group.threadId}`, error);
+			}
+		}
+		else {
+			console.log(`Thread not found: ${group.threadId}`);
+		}
+
+		if (embed) {
+			try {
+				console.log(`Attempting to delete embed: ${group.embedId}`);
+				await embed.delete();
+				console.log(`Deleted embed: ${group.embedId}`);
+			}
+			catch (error) {
+				console.error(`Failed to delete embed: ${group.embedId}`, error);
+			}
+		}
+		else {
+			console.log(`Embed not found: ${group.embedId}`);
+		}
+	}
+};
+
 export const isMoreThan24Hours = (timestamp: Date): boolean => {
 	const futureDate = new Date(timestamp.getTime() + 24 * 60 * 60 * 1000);
 	return new Date() > futureDate;

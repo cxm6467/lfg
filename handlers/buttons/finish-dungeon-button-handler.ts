@@ -1,7 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { ButtonInteraction, ThreadChannel, User } from 'discord.js';
+import { Client } from 'discord.js';
 import { Document } from 'mongoose';
+import { IGroup } from '../../interfaces';
+import { finishGroup } from '../../utils/tasks';
 
-export const finishDungeonButtonHandler = async (interaction: ButtonInteraction, group: Document, user: User, thread: ThreadChannel) => {
-	throw new Error('Not implemented');
+/**
+ * Handles the finish dungeon button interaction.
+ *
+ * @param client - The Discord client instance.
+ * @param group - The group document containing group details.
+ *
+ * @returns A promise that resolves when the group is finished.
+ */
+export const finishDungeonButtonHandler = async (client: Client, group: Document & IGroup) => {
+	await finishGroup(client, group.groupId);
 };

@@ -39,7 +39,7 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
 		console.log('Add Bres button pressed');
 		break;
 	case 'addFinish':
-		if (group && thread) await finishDungeonButtonHandler(interaction, group, user, thread);
+		if (group && thread) await finishDungeonButtonHandler(client, group);
 		await interaction.deferUpdate();
 		break;
 	case 'addClearRole':

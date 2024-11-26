@@ -5,6 +5,28 @@ import { getMessageByMessageId } from '../../utils';
 import { IGroup } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 
+/**
+ * Handles the clear role button interaction for a user in a Discord group.
+ *
+ * @param client - The Discord client instance.
+ * @param groupId - The ID of the group from which the role is to be cleared.
+ * @param user - The Discord user whose role is to be cleared.
+ *
+ * @returns A promise that resolves when the role has been cleared and the embed message has been updated.
+ *
+ * @remarks
+ * This function performs the following steps:
+ * 1. Retrieves the group document from the database using the provided groupId.
+ * 2. Finds the user in the group's members list and retrieves their current role.
+ * 3. If the user does not have a role or their role is already `None`, sends a message to the user and exits.
+ * 4. Clears the user's role and updates the group's members list.
+ * 5. Saves the updated group document to the database.
+ * 6. Retrieves the embed message associated with the group.
+ * 7. Updates the embed message to reflect the cleared role and any changes to the `Lust` and `Bres` fields.
+ * 8. Edits the embed message with the updated embed.
+ *
+ * @throws Will throw an error if the group document cannot be retrieved or saved, or if the embed message cannot be found or edited.
+ */
 export const clearRoleButtonHandler = async (client: Client, groupId: string, user: User) => {
 	const group = await GroupModel.findOne({ groupId }) || {} as Document & IGroup;
 	const userMember = group.get('members').find((member: { userId: string; role: string; }) => member.userId === user.id);

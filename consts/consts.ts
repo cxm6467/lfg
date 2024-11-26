@@ -2,7 +2,6 @@ export const SG_DEV_SERVER_ID = '771934233110773811';
 export const SG_PROD_SERVER_ID = '171797913364725765';
 export const DEV_SERVER_ID = '1146675634270109788';
 
-
 export const TIME_ZONE_MAPPING: Record<string, string> = {
 	EST: 'America/New_York',
 	EDT: 'America/New_York',

@@ -5,6 +5,22 @@ import { GroupModel } from '../../models/group';
 import { getMessageByMessageId } from '../../utils';
 import { updateEmbedField } from '../../services';
 
+/**
+ * Handles the addition of a Tank role to a user in a group.
+ *
+ * @param client - The Discord client instance.
+ * @param groupId - The ID of the group to which the user belongs.
+ * @param user - The Discord user who clicked the add tank button.
+ *
+ * @returns A promise that resolves when the role has been added or an appropriate message has been sent to the user.
+ *
+ * @remarks
+ * - If the group is not found, logs an error message.
+ * - If the user is not found in the group, logs an error message.
+ * - If the user already has a role in the group, sends a message to the user.
+ * - If there is already a Tank in the group, sends a message to the user.
+ * - If the user has no role and there is no Tank in the group, assigns the Tank role to the user, updates the group, and updates the embed message.
+ */
 export const addTankButtonHandler = async (client: Client, groupId: string, user: User) => {
 	const group = await GroupModel.findOne({ groupId });
 
