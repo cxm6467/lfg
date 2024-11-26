@@ -7,8 +7,8 @@ services:
       - "3000:3000"  # Adjust the port if your app uses a different one
     environment:
       - LOCAL_MONGO_URI=mongodb://mongo:27017/mydb
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
     # networks:
     #   - local
     volumes:
