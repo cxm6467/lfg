@@ -15,18 +15,18 @@ services:
       - .:/app  # Mount the current directory to /app inside the container
     command: ["ts-node", "./app.ts"]  # Command to run your application
 
-  mongo:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    networks:
-      - local
+  # mongo:
+  #   image: mongo:latest
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-data:/data/db
+  #   networks:
+  #     - local
 
-networks:
-  local:
-    driver: bridge
+# networks:
+#   local:
+#     driver: bridge
 
-volumes:
-  mongo-data:
+# volumes:
+#   mongo-data:
