@@ -84,12 +84,12 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
  *
  * @throws Will log an error if the group, thread, or embed cannot be found or deleted.
  */
-export const finishGroup = async (client: Client, groupId:string) => {
+export const finishGroup = async (client: Client, groupId:string, userId: string) => {
 	const group = await GroupModel.findOne({ groupId });
 
 	if (!group) {logger(LogLevel.WARN, `Group with id ${groupId} not found`);}
 
-	else if (group.members && group.members.some(m => m.userId === client.user?.id)) {
+	else if (group.members && group.members.some(m => m.userId === userId)) {
 		const thread = await getThreadByMessageId(client, group.threadId ?? '');
 		const embed = await getMessageByMessageId(client, group.embedId ?? '', group.guildId ?? '', group.channelId ?? '');
 
@@ -122,8 +122,13 @@ export const finishGroup = async (client: Client, groupId:string) => {
 		}
 	}
 	else {
-		logger(LogLevel.WARN, `Client ${client.user} user not found in group ${groupId}`);
-		client.user?.send('You are not in this group');
+		logger(LogLevel.WARN, `Client ${client.user?.id} user not found in group ${groupId}`);
+		try {
+			client.user?.send('You are not in this group');
+		}
+		catch (error) {
+			logger(LogLevel.ERROR, `Failed to send message to user: ${JSON.stringify(error)}`);
+		}
 	}
 };
 

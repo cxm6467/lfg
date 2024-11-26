@@ -1,4 +1,4 @@
-import { Client } from 'discord.js';
+import { Client, User } from 'discord.js';
 import { Document } from 'mongoose';
 import { IGroup } from '../../interfaces';
 import { finishGroup } from '../../utils/tasks';
@@ -11,6 +11,6 @@ import { finishGroup } from '../../utils/tasks';
  *
  * @returns A promise that resolves when the group is finished.
  */
-export const finishDungeonButtonHandler = async (client: Client, group: Document & IGroup) => {
-	await finishGroup(client, group.groupId);
+export const finishDungeonButtonHandler = async (client: Client, group: Document & IGroup, user: User) => {
+	await finishGroup(client, group.groupId, user?.id);
 };

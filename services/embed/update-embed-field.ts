@@ -25,7 +25,7 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 
 	logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed?.fields)}`);
 	const roleField = embed?.fields.find(x => x.name.replace(/\*/g, '').trim() === field.toString().replace(/ /g, ''));
-	logger(LogLevel.DEBUG, `Role field: ${roleField}`);
+	logger(LogLevel.DEBUG, `Role field: ${JSON.stringify(roleField)}`);
 
 	if (roleField) {
 		switch (field) {

@@ -50,22 +50,24 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 
 		if (group) {
 			logger(LogLevel.INFO, `Start time: ${startTime}`);
-			const parsedStartTime = DateTime.fromJSDate(parseDate(startTime) ?? new Date());
+			const originalStartTime = DateTime.fromJSDate(new Date(startTime), { zone: timeZone });
+			const parsedDate = parseDate(originalStartTime.toJSDate().toISOString(), new Date());
+			const parsedStartTime = DateTime.fromJSDate(parsedDate ?? new Date(), { zone: timeZone });
 
 			if (parsedStartTime) {
 				logger(LogLevel.INFO, `Parsed start time (local): ${parsedStartTime}`);
 
 
-				const adjustedStartTime = parsedStartTime.setZone(TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC');
-				logger(LogLevel.INFO, `Adjusted start time with time zone (${timeZone}): ${adjustedStartTime}`);
+				// const adjustedStartTime = parsedStartTime.setZone(TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC');
+				logger(LogLevel.INFO, `Adjusted start time with time zone (${timeZone}): ${parsedStartTime}`);
 
-				if (isNaN(adjustedStartTime.toUnixInteger())) {
+				if (isNaN(parsedStartTime.toUnixInteger())) {
 					logger(LogLevel.ERROR, 'Invalid date detected after time zone adjustment');
 					return;
 				}
 
-				group.startTime = adjustedStartTime.toJSDate();
-				epochTimestamp = adjustedStartTime.toJSDate().getTime();
+				group.startTime = parsedStartTime.toJSDate();
+				epochTimestamp = parsedStartTime.toJSDate().getTime();
 
 			}
 			else {
