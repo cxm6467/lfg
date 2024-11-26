@@ -9,8 +9,8 @@ services:
       - LOCAL_MONGO_URI=mongodb://mongo:27017/mydb
     depends_on:
       - mongo
-    networks:
-      - local
+    # networks:
+    #   - local
     volumes:
       - .:/app  # Mount the current directory to /app inside the container
     command: ["ts-node", "./app.ts"]  # Command to run your application
