@@ -13,6 +13,8 @@ export const DungeonSchema = new Schema<IDungeon, Model<IDungeon>>({
 export const MemberSchema = new Schema<IMember, Model<IMember>>({
 	userId: { type: String, required: false },
 	role: { type: String, enum: MemberRole },
+	hasLust: { type: Boolean },
+	hasBres: { type: Boolean },
 }, { collection: 'member', timestamps: true });
 
 export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
@@ -27,7 +29,5 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
 	notes: { type: String },
 	embedId: { type: String },
 	startTime: { type: Date },
-	hasLust: { type: Boolean },
-	hasBres: { type: Boolean },
 	archived: { type: Boolean, default: false },
 }, { collection: 'group', timestamps: true });

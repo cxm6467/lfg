@@ -16,6 +16,9 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 	}
 	else {
 		userMember.role = MemberRole.None;
+		userMember.hasBres = false;
+		userMember.hasLust = false;
+
 		group.set('members', group.get('members').map((member: { userId: string; role: string; }) => {
 			if (member.userId === user.id) {
 				return userMember;
@@ -33,6 +36,18 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		}
 		const embed: Embed = embedMessage.embeds[0];
 		const roleField = embed.fields.find(field => field.name.replace(/\*/g, '').trim() === originalRole.replace(/\*/g, '').trim());
+		const lustField = embed.fields.find(field => field.name === '**Lust**');
+		const bresField = embed.fields.find(field => field.name === '**Bres**');
+
+		if (lustField && !group.members?.some(member => member.hasLust)) {
+			lustField.value = 'None';
+		}
+
+		if (bresField && !group.members?.some(member => member.hasBres)) {
+			bresField.value = 'None';
+		}
+
+
 		console.log(embed.fields);
 		console.log('Original role:', originalRole);
 		console.log('Role field:', roleField);

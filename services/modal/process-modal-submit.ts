@@ -43,7 +43,7 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 
 
 				// Adjust the parsed date to the specified time zone using moment-timezone
-				const adjustedStartTime = parsedStartTime.setZone('America/New_York');
+				const adjustedStartTime = parsedStartTime.setZone(TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC');
 				console.log(`Adjusted start time with time zone (${timeZone}): ${adjustedStartTime}`);
 
 				// Check if the final date is a valid date
@@ -54,7 +54,7 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 
 				// Store the adjusted start time in the group
 				group.startTime = adjustedStartTime.toJSDate();
-				epochTimestamp = adjustedStartTime;
+				epochTimestamp = adjustedStartTime.toJSDate().getTime();
 
 			}
 			else {

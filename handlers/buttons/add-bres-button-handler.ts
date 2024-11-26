@@ -9,6 +9,10 @@ export const addBresButtonHandler = async (client: Client, groupId: string, user
 	if (group) {
 		if (!group.hasBres) {
 			group.hasBres = true;
+			const member = group?.members?.find(m => m.userId === user.id);
+			if (member) {
+				member.hasBres = true;
+			}
 			await group.save();
 			const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
 			await updateEmbedField(embedMessage ?? {} as Message, PartyBuffs.Bres, user.id);

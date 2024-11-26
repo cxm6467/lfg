@@ -49,13 +49,13 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 				},
 				{
 					name: '**Bres**',
-					value: group.hasBres
+					value: group.members?.some(member => member.hasBres)
 						? '✅'
 						: 'None',
 				},
 				{
 					name: '**Lust**',
-					value: group.hasLust
+					value: group.members?.some(member => member.hasLust)
 						? '✅'
 						: 'None',
 				},
