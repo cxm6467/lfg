@@ -1,11 +1,9 @@
 import { ModalSubmitInteraction } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { parseDate } from 'chrono-node';
 import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
-import { DateTime } from 'luxon';
 import { LogLevel } from '../../enums';
-import { logger } from '../../utils';
+import { logger, parseDateTime } from '../../utils';
 
 /**
  * Processes the modal submit interaction from Discord.
@@ -36,61 +34,47 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 	const timeZone = TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC';
 	logger(LogLevel.INFO, `Using time zone: ${timeZone} for abbreviation: ${timeZoneAbbr}`);
 
-	let epochTimestamp;
+	if (!groupId) {
+		logger(LogLevel.WARN, 'Group ID not found in customId');
+		return;
+	}
 
 	const group = await GroupModel.findOne({ groupId });
+	if (!group) {
+		logger(LogLevel.WARN, `Group with ID ${groupId} not found`);
+		return;
+	}
 
-	if (groupId) {
-		logger(LogLevel.INFO, `Group ID: ${groupId}, Group found: ${!!group}`);
+	try {
+		logger(LogLevel.INFO, `Parsing start time: ${startTime}`);
+		const parsedDateTime = parseDateTime(startTime, timeZone);
+
+		logger(LogLevel.INFO, `Successfully parsed start time: ${parsedDateTime.toString()}`);
+
+		const mongoTimestamp = parsedDateTime.toJSDate();
+		const discordTimestamp = `<t:${parsedDateTime.toSeconds()}:F>`;
+
+		logger(LogLevel.INFO, `MongoDB timestamp: ${mongoTimestamp}`);
+		logger(LogLevel.INFO, `Discord timestamp: ${discordTimestamp}`);
+
+		group.startTime = mongoTimestamp;
+		group.notes = notes;
+		await group.save();
 
 		const groupMessage = await interaction.reply({
-			content: `Processing your submission for groupId: [${groupId}]`,
+			content: `Submission processed! Group start time: ${discordTimestamp}`,
 			fetchReply: true,
 		});
 
-		if (group) {
-			logger(LogLevel.INFO, `Start time: ${startTime}`);
-			const originalStartTime = DateTime.fromJSDate(new Date(startTime), { zone: timeZone });
-			const parsedDate = parseDate(originalStartTime.toJSDate().toISOString(), new Date());
-			const parsedStartTime = DateTime.fromJSDate(parsedDate ?? new Date(), { zone: timeZone });
-
-			if (parsedStartTime) {
-				logger(LogLevel.INFO, `Parsed start time (local): ${parsedStartTime}`);
-
-
-				// const adjustedStartTime = parsedStartTime.setZone(TIME_ZONE_MAPPING[timeZoneAbbr.toUpperCase()] ?? 'UTC');
-				logger(LogLevel.INFO, `Adjusted start time with time zone (${timeZone}): ${parsedStartTime}`);
-
-				if (isNaN(parsedStartTime.toUnixInteger())) {
-					logger(LogLevel.ERROR, 'Invalid date detected after time zone adjustment');
-					return;
-				}
-
-				group.startTime = parsedStartTime.toJSDate();
-				epochTimestamp = parsedStartTime.toJSDate().getTime();
-
-			}
-			else {
-				logger(LogLevel.ERROR, 'Failed to parse start time using chrono-node');
-			}
-
-			group.notes = notes;
-
-			await group.save();
-
-			return {
-				groupMessage,
-				epochTimestamp,
-				timeZone,
-				notes,
-			} as IProssesedModalData;
-		}
-		else {
-			logger(LogLevel.WARN, `Group with ID ${groupId} not found`);
-		}
+		return {
+			groupMessage,
+			epochTimestamp: mongoTimestamp.getTime(),
+			timeZone,
+			notes,
+		} as IProssesedModalData;
 	}
-	else {
-		logger(LogLevel.WARN, 'Group ID not found in customId');
+	catch (error) {
+		logger(LogLevel.ERROR, `Error processing modal submit: ${JSON.stringify(error)}`);
+		return;
 	}
 };
-
