@@ -20,7 +20,6 @@ client.once(Events.ClientReady, async (readyClient) => {
 	await mongooseConnectionHelper();
 	await registerCommands();
 	const groups = await GroupModel.find();
-	// if(groups.length > 0) console.log(groups.map(group => ({ messageId: group.messageId, groupName: group.groupName, guildId: group.guildId, channelId: group.channelId })));
 	for (const group of groups) {
 		await reactToMessage(client, group);
 	}

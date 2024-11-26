@@ -1,11 +1,17 @@
 import { DEV_MENTION_CHOICES, DEV_SERVER_ID, SG_DEV_MENTION_CHOICES, SG_DEV_SERVER_ID, SG_PROD_MENTION_CHOICES, SG_PROD_SERVER_ID } from '../../consts';
 import { MemberRole, DungeonType } from '../../enums';
 
-// Modify the function to use these types
+/**
+ * A helper function to determine the mentions to use based on the server ID, role, and difficulty.
+ *
+ * @param serverId The server ID to compare against the constants.
+ * @param role The role to exclude from the mentions.
+ * @param difficulty The difficulty to include in the mentions.
+ * @returns An array of mentions to use.
+ */
 export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: DungeonType): string[] | null => {
 	console.log(`Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
 
-	// Determine the mention choices based on the server ID
 	let mentionChoices: Record<string, string> = {};
 	switch (String(serverId)) {
 	case String(SG_DEV_SERVER_ID):
@@ -21,11 +27,9 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 		return null;
 	}
 
-	// Initialize lists for role and difficulty mentions
 	let roleMentions: string[] = [];
 	let difficultyMentions: string[] = [];
 
-	// If role is provided, check if it's a valid MemberRole
 	console.log(`Role provided: ${role}`);
 	if (role) {
 		const validRoles = [MemberRole.Tank, MemberRole.Healer, MemberRole.Dps].filter(r => r !== role);
@@ -33,7 +37,6 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 
 
 		if (validRoles) {
-			// Filter out the provided role and exclude any difficulties
 			roleMentions = validRoles.map(r => mentionChoices[`${r.toLowerCase()}_role`]).filter(Boolean);
 		}
 		else {
@@ -54,14 +57,11 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 		}
 	}
 
-	// Combine the lists: role mentions (excluding the provided role) and difficulty mentions
 	const mentionsToReturn = [...roleMentions, ...difficultyMentions];
 
-	// Print the mentions for debugging purposes
 	console.log(`Filtered role mentions (excluding the provided role and difficulties): ${roleMentions}`);
 	console.log(`Difficulty mentions: ${difficultyMentions}`);
 	console.log(`Combined mentions: ${mentionsToReturn}`);
 
-	// Return the combined mentions
 	return mentionsToReturn;
 };

@@ -3,6 +3,15 @@ import { IGroup } from '../../interfaces';
 import { getMessageByMessageId } from './get-message-by-message-id';
 
 
+/**
+ * Reacts to a message in a specified group with a thumbs up emoji.
+ *
+ * @param client - The Discord client instance.
+ * @param group - The group object containing messageId, guildId, and channelId.
+ * @returns A promise that resolves when the reaction is added.
+ *
+ * @throws Will log an error if there is an issue reacting to the message.
+ */
 export const reactToMessage = async (client: Client, group: IGroup) => {
 	try {
 		if (group.messageId && group.guildId && group.channelId) {

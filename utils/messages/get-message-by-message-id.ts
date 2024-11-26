@@ -1,5 +1,25 @@
 import { Client, TextChannel, NewsChannel, ThreadChannel, PermissionsBitField } from 'discord.js';
 
+/**
+ * Fetches a message by its ID from a specified channel in a guild.
+ *
+ * @param client - The Discord client instance.
+ * @param messageId - The ID of the message to fetch.
+ * @param guildId - The ID of the guild where the message is located.
+ * @param channelId - The ID of the channel where the message is located.
+ * @returns The fetched message if found, otherwise undefined.
+ *
+ * @remarks
+ * This function requires the bot to have the following permissions in the specified channel:
+ * - ViewChannel
+ * - ReadMessageHistory
+ * - AddReactions
+ *
+ * Ensure that this function is called after the client's ready event.
+ *
+ * @throws Will log an error message if the bot user is not available, the guild or channel is not found,
+ * or if the bot lacks the necessary permissions.
+ */
 export const getMessageByMessageId = async (client: Client, messageId: string, guildId: string, channelId: string) => {
 	try {
 		if (!client.user) {
@@ -15,13 +35,11 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 
 		const channel = await guild.channels.fetch(channelId ?? '');
 
-		// Check if the channel is text-based or a valid thread
 		if (!channel || !(channel instanceof TextChannel || channel instanceof NewsChannel || channel instanceof ThreadChannel)) {
 			console.log(`Channel with ID ${channelId} not found or is not a valid text-based channel`);
 			return;
 		}
 
-		// Ensure the bot has required permissions in the channel
 		const permissions = channel.permissionsFor(client.user.id);
 		if (!permissions?.has(PermissionsBitField.Flags.ViewChannel) ||
         !permissions?.has(PermissionsBitField.Flags.ReadMessageHistory) ||
@@ -30,7 +48,6 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 			return;
 		}
 
-		// Use the `around` method to fetch the message
 		console.log(`Fetching message ID ${messageId} from channel ${channelId} in guild ${guildId}`);
 
 		const messages = await channel.messages.fetch({
@@ -38,7 +55,6 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 			limit: 1,
 		});
 
-		// Get the first message from the collection
 		const groupMessage = messages.first();
 		if (groupMessage) {
 			return groupMessage;
