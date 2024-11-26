@@ -1,8 +1,8 @@
 import { Client, Message, User } from 'discord.js';
-import { PartyBuffs } from '../../enums';
+import { LogLevel, PartyBuffs } from '../../enums';
 import { GroupModel } from '../../models/group';
 import { updateEmbedField } from '../../services';
-import { getMessageByMessageId } from '../../utils';
+import { getMessageByMessageId, logger } from '../../utils';
 
 /**
  * Handles the addition of the "Lust" buff to a group in a Discord server.
@@ -38,7 +38,7 @@ export const addLustButtonHandler = async (client: Client, groupId: string, user
 		}
 	}
 	else {
-		console.log(`Group with id ${groupId} not found`);
+		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
 	}
 
 };

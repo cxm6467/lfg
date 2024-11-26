@@ -13,9 +13,9 @@
  * @throws Will log an error message if the group, embed message, or required IDs are not found.
  */
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
-import { getMessageByMessageId } from '../../utils';
+import { getMessageByMessageId, logger } from '../../utils';
 import { GroupModel } from '../../models/group';
-import { CustomEmoji } from '../../enums';
+import { CustomEmoji, LogLevel } from '../../enums';
 
 
 export const addEmbedButtons = async (client: Client, groupId: string) => {
@@ -77,18 +77,13 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 				components: [rowOne, rowTwo, rowThree],
 			});
 
-			console.log('Buttons added successfully.');
+			logger(LogLevel.INFO, 'Buttons added successfully.');
 		}
 		else {
-			console.log('Embed not found in the message.');
+			logger(LogLevel.ERROR, 'Embed not found in the message.');
 		}
 	}
 	else {
-		console.log('Message ID, Guild ID, or Channel ID not found in group.', {
-			embedId: group?.embedId,
-			guildId: group?.guildId,
-			channelId: group?.channelId,
-			messageId: group?.messageId,
-		});
+		logger(LogLevel.WARN, `Message ID, Guild ID, or Channel ID not found in group. Embed ID: ${group?.embedId}, Guild ID: ${group?.guildId}, Channel ID: ${group?.channelId}, Message ID: ${group?.messageId}`);
 	}
 };

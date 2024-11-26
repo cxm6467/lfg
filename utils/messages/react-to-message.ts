@@ -1,6 +1,8 @@
 import { Client } from 'discord.js';
 import { IGroup } from '../../interfaces';
 import { getMessageByMessageId } from './get-message-by-message-id';
+import { logger } from '../logger';
+import { LogLevel } from '../../enums';
 
 
 /**
@@ -20,6 +22,6 @@ export const reactToMessage = async (client: Client, group: IGroup) => {
 		}
 	}
 	catch (error) {
-		console.error(`Error reacting to message in guild ${group.guildId}:`, error);
+		logger(LogLevel.ERROR, `Error reacting to message in guild ${group.guildId}: ${error}`);
 	}
 };

@@ -3,3 +3,4 @@ export * from './messages';
 export * from './roles';
 export * from './mentions';
 export * from './dungeons';
+export * from './logger';

@@ -5,8 +5,8 @@ import { mongooseConnectionHelper } from './services/mongoose-connection-helper'
 import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
-import { getMessageByMessageId, reactToMessage } from './utils';
-import { ModalField } from './enums';
+import { getMessageByMessageId, logger, reactToMessage } from './utils';
+import { LogLevel, ModalField } from './enums';
 import { archiveAndDeleteThreadAndEmbed } from './utils/tasks';
 
 dotenv.config();
@@ -16,7 +16,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async (readyClient) => {
-	console.log(`Logged in as ${readyClient.user?.tag}`);
+	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`);
 	await mongooseConnectionHelper();
 	await registerCommands();
 	const groups = await GroupModel.find();
@@ -27,7 +27,7 @@ client.once(Events.ClientReady, async (readyClient) => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (interaction.isCommand()) {
-		console.log(`Interaction received: ${interaction.commandName}`);
+		logger(LogLevel.DEBUG, `Interaction received: ${interaction.commandName}`);
 		if (interaction.commandName === 'lfm') await processInteractionResponse(interaction as ChatInputCommandInteraction);
 	}
 	if (interaction.isModalSubmit()) {
@@ -35,13 +35,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		const model = await GroupModel.findOne({ groupId });
 		const modalData = await processModalSubmit(interaction);
 		if (!modalData) {
-			console.error('Failed to process modal submit');
+			logger(LogLevel.ERROR, 'Failed to process modal submit');
 			return;
 		}
 		const { groupMessage, epochTimestamp, notes } = modalData;
-		console.log('Group message id:', groupMessage?.id);
+		logger(LogLevel.INFO, `Group message id: ${groupMessage?.id}`);
 
-		console.log({ modalData });
+		logger(LogLevel.DEBUG, `Modal data: ${JSON.stringify(modalData)}`);
 
 
 		await model?.updateOne({ messageId: groupMessage?.id });
@@ -50,13 +50,13 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 		const msg = await getMessageByMessageId(client, groupMessage?.id ?? '', model?.guildId ?? '', model?.channelId ?? '');
 
-		console.log({ fields: msg?.embeds[0].fields });
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(msg?.embeds[0].fields)}`);
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
 	}
 	if (interaction.isButton()) {
-		console.log('Button interaction:', interaction.customId);
+		logger(LogLevel.INFO, `Button interaction: ${interaction.customId}`);
 		const matchResult = interaction.customId.match(/^([^[]+)\[([^\]]+)\]/);
 		const buttonAction = matchResult?.[1];
 		const groupId = matchResult?.[2];
@@ -68,10 +68,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 setInterval(async () => {
 	try {
 		await archiveAndDeleteThreadAndEmbed(client);
-		console.log('Successfully deleted and closed threads');
+		logger(LogLevel.INFO, 'Successfully deleted and closed threads');
 	}
 	catch (error) {
-		console.error('Error deleting and closing threads:', error);
+		logger(LogLevel.ERROR, `Error deleting and closing threads: ${error}`);
 	}
 }, 300000);
 

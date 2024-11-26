@@ -1,5 +1,6 @@
 import { DUNGEON_URLS } from '../../consts';
-import { DungeonName } from '../../enums';
+import { DungeonName, LogLevel } from '../../enums';
+import { logger } from '../logger';
 
 
 /**
@@ -9,10 +10,10 @@ import { DungeonName } from '../../enums';
  * @returns The URL corresponding to the given dungeon name.
  */
 export const convertDungeonName = (dungeonName: DungeonName): string => {
-	console.debug(`convertDungeonName called with dungeonName: ${dungeonName}`);
+	logger(LogLevel.INFO, `convertDungeonName called with dungeonName: ${dungeonName}`);
 
 	const url = getDungeonURL(dungeonName);
-	console.debug(`URL obtained from getDungeonURL: ${url}`);
+	logger(LogLevel.INFO, `URL obtained from getDungeonURL: ${url}`);
 
 	return url;
 };
@@ -24,13 +25,13 @@ export const convertDungeonName = (dungeonName: DungeonName): string => {
  * @returns The embed color as a string.
  */
 export const getEmbedColor = (dungeonName: DungeonName): string => {
-	console.debug(`getEmbedColor called with dungeonName: ${dungeonName}`);
+	logger(LogLevel.INFO, `getEmbedColor called with dungeonName: ${dungeonName}`);
 
 	const dungeonKey = getDungeonKeyByName(dungeonName);
-	console.debug(`Dungeon key obtained in getEmbedColor: ${dungeonKey}`);
+	logger(LogLevel.INFO, `Dungeon key obtained in getEmbedColor: ${dungeonKey}`);
 
 	const borderColor = DUNGEON_URLS.find(d => d.key === dungeonKey)?.borderColor ?? '#DCB106';
-	console.debug(`Border color found in getEmbedColor: ${borderColor}`);
+	logger(LogLevel.INFO, `Border color found in getEmbedColor: ${borderColor}`);
 
 	return borderColor;
 };
@@ -42,13 +43,13 @@ export const getEmbedColor = (dungeonName: DungeonName): string => {
  * @returns The URL corresponding to the given dungeon name.
  */
 const getDungeonURL = (dungeonName: DungeonName): string => {
-	console.debug(`getDungeonURL called with dungeonName: ${dungeonName}`);
+	logger(LogLevel.INFO, `getDungeonURL called with dungeonName: ${dungeonName}`);
 
 	const dungeonKey = getDungeonKeyByName(dungeonName);
-	console.debug(`Dungeon key obtained in getDungeonURL: ${dungeonKey}`);
+	logger(LogLevel.INFO, `Dungeon key obtained in getDungeonURL: ${dungeonKey}`);
 
 	const url = DUNGEON_URLS.find(d => d.key === dungeonKey)?.url ?? DUNGEON_URLS.find(d => d.key === 'ANY')?.url;
-	console.debug(`URL found in getDungeonURL: ${url}`);
+	logger(LogLevel.INFO, `URL found in getDungeonURL: ${url}`);
 
 	return url ?? '';
 };
@@ -61,12 +62,12 @@ const getDungeonURL = (dungeonName: DungeonName): string => {
  * @returns The key corresponding to the provided dungeon name, or 'ANY' if no match is found.
  */
 const getDungeonKeyByName = (dungeonName: DungeonName): keyof typeof DungeonName => {
-	console.debug(`getDungeonKeyByName called with dungeonName: ${dungeonName}`);
+	logger(LogLevel.INFO, `getDungeonKeyByName called with dungeonName: ${dungeonName}`);
 
 	const key = (Object.keys(DungeonName) as Array<keyof typeof DungeonName>).find(
 		(dungeonKey) => DungeonName[dungeonKey] === dungeonName,
 	);
 
-	console.debug(`Key found in getDungeonKeyByName: ${key}`);
+	logger(LogLevel.INFO, `Key found in getDungeonKeyByName: ${key}`);
 	return key ?? 'ANY';
 };

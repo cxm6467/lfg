@@ -18,9 +18,9 @@
  */
 import { Client, Message, User } from 'discord.js';
 import { updateEmbedField } from '../../services';
-import { getMessageByMessageId } from '../../utils';
+import { getMessageByMessageId, logger } from '../../utils';
 import { GroupModel } from '../../models/group';
-import { PartyBuffs } from '../../enums';
+import { LogLevel, PartyBuffs } from '../../enums';
 
 
 export const addBresButtonHandler = async (client: Client, groupId: string, user:User) => {
@@ -39,6 +39,6 @@ export const addBresButtonHandler = async (client: Client, groupId: string, user
 		}
 	}
 	else {
-		console.log(`Group with id ${groupId} not found`);
+		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
 	}
 };

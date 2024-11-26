@@ -1,4 +1,6 @@
 import { Client, TextChannel, NewsChannel, ThreadChannel, PermissionsBitField } from 'discord.js';
+import { LogLevel } from '../../enums';
+import { logger } from '../logger';
 
 /**
  * Fetches a message by its ID from a specified channel in a guild.
@@ -23,20 +25,20 @@ import { Client, TextChannel, NewsChannel, ThreadChannel, PermissionsBitField } 
 export const getMessageByMessageId = async (client: Client, messageId: string, guildId: string, channelId: string) => {
 	try {
 		if (!client.user) {
-			console.log('Bot user is not available yet. Make sure this function is called after the ready event.');
+			logger(LogLevel.WARN, 'Bot user is not available yet. Make sure this function is called after the ready event.');
 			return;
 		}
 
 		const guild = await client.guilds.fetch(guildId ?? '');
 		if (!guild) {
-			console.log(`Guild with ID ${guildId} not found`);
+			logger(LogLevel.WARN, `Guild with ID ${guildId} not found`);
 			return;
 		}
 
 		const channel = await guild.channels.fetch(channelId ?? '');
 
 		if (!channel || !(channel instanceof TextChannel || channel instanceof NewsChannel || channel instanceof ThreadChannel)) {
-			console.log(`Channel with ID ${channelId} not found or is not a valid text-based channel`);
+			logger(LogLevel.WARN, `Channel with ID ${channelId} not found or is not a valid text-based channel`);
 			return;
 		}
 
@@ -44,11 +46,11 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 		if (!permissions?.has(PermissionsBitField.Flags.ViewChannel) ||
         !permissions?.has(PermissionsBitField.Flags.ReadMessageHistory) ||
         !permissions?.has(PermissionsBitField.Flags.AddReactions)) {
-			console.log(`Bot does not have permission to view messages or react in channel ${channelId}`);
+			logger(LogLevel.WARN, `Bot does not have permission to view messages or react in channel ${channelId}`);
 			return;
 		}
 
-		console.log(`Fetching message ID ${messageId} from channel ${channelId} in guild ${guildId}`);
+		logger(LogLevel.INFO, `Fetching message ID ${messageId} from channel ${channelId} in guild ${guildId}`);
 
 		const messages = await channel.messages.fetch({
 			around: messageId,
@@ -60,10 +62,10 @@ export const getMessageByMessageId = async (client: Client, messageId: string, g
 			return groupMessage;
 		}
 		else {
-			console.log(`Message with ID ${messageId} not found.`);
+			logger(LogLevel.WARN, `Message with ID ${messageId} not found.`);
 		}
 	}
 	catch (error) {
-		console.error('An error occurred while fetching the message:', error);
+		logger(LogLevel.ERROR, `An error occurred while fetching the message: ${error}`);
 	}
 };

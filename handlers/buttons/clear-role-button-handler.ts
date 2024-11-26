@@ -1,7 +1,7 @@
 import { Client, Embed, User } from 'discord.js';
 import { Document } from 'mongoose';
-import { MemberRole } from '../../enums';
-import { getMessageByMessageId } from '../../utils';
+import { LogLevel, MemberRole } from '../../enums';
+import { getMessageByMessageId, logger } from '../../utils';
 import { IGroup } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 
@@ -68,17 +68,15 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		if (bresField && !group.members?.some(member => member.hasBres)) {
 			bresField.value = 'None';
 		}
-
-
-		console.log(embed.fields);
-		console.log('Original role:', originalRole);
-		console.log('Role field:', roleField);
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed.fields)}`);
+		logger(LogLevel.DEBUG, `Original role: ${originalRole}`);
+		logger(LogLevel.DEBUG, `Role field: ${JSON.stringify(roleField)}`);
 		if (roleField && roleField.value.includes(`<@${user.id}>`)) {
-			console.log('Role field found:', roleField);
+			logger(LogLevel.INFO, `Role field found: ${JSON.stringify(roleField)}`);
 			roleField.value = 'None';
 		}
 		else {
-			console.log('Role field not found');
+			logger(LogLevel.ERROR, 'Role field not found');
 		}
 		await embedMessage.edit({ embeds: [embed] });
 		// get embed

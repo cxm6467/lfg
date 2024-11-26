@@ -1,7 +1,8 @@
 import { ButtonInteraction, Client, ThreadChannel, User } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { getThreadByMessageId } from '../../utils';
+import { getThreadByMessageId, logger } from '../../utils';
 import { addBresButtonHandler, addDpsButtonHandler, addHealerButtonHandler, addLustButtonHandler, addTankButtonHandler, clearRoleButtonHandler, finishDungeonButtonHandler } from '../../handlers';
+import { LogLevel } from '../../enums';
 
 /**
  * Handles button interactions for a Discord bot.
@@ -29,39 +30,39 @@ import { addBresButtonHandler, addDpsButtonHandler, addHealerButtonHandler, addL
  * Each button interaction is logged to the console for debugging purposes.
  */
 export const handleButtonInteraction = async (customId: string, groupId:string, user: User, client: Client, interaction:ButtonInteraction) => {
-	console.log(`Button interaction received with customId: ${customId} and groupId: ${groupId}`);
+	logger(LogLevel.INFO, `Button interaction received with customId: ${customId} and groupId: ${groupId}`);
 	const group = await GroupModel.findOne({ groupId });
 	const thread = await getThreadByMessageId(client, group?.threadId ?? '') as ThreadChannel<boolean> | undefined;
 
 	if (!thread) {
-		console.log('Thread not found');
+		logger(LogLevel.ERROR, 'Thread not found');
 		return;
 	}
 	switch (customId) {
 	case 'addDps':
 		if (group && thread) await addDpsButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add dps button pressed');
+		logger(LogLevel.INFO, 'Add dps button pressed');
 		break;
 	case 'addHealer':
 		if (group && thread) await addHealerButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Healer button pressed');
+		logger(LogLevel.INFO, 'Add Healer button pressed');
 		break;
 	case 'addTank':
 		if (group && thread) await addTankButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Tank button pressed');
+		logger(LogLevel.INFO, 'Add Tank button pressed');
 		break;
 	case 'addLust':
 		if (group && thread) await addLustButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Lust button pressed');
+		logger(LogLevel.INFO, 'Add Lust button pressed');
 		break;
 	case 'addBres':
 		if (group && thread) await addBresButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Bres button pressed');
+		logger(LogLevel.INFO, 'Add Bres button pressed');
 		break;
 	case 'addFinish':
 		if (group && thread) await finishDungeonButtonHandler(client, group);
@@ -70,9 +71,9 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
 	case 'addClearRole':
 		if (group && thread) await clearRoleButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		console.log('Add Clear Role button pressed');
+		logger(LogLevel.INFO, 'Add Clear Role button pressed');
 		break;
 	default:
-		console.log('Unknown button pressed');
+		logger(LogLevel.WARN, 'Unknown button pressed');
 	}
 };

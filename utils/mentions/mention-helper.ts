@@ -1,5 +1,6 @@
 import { DEV_MENTION_CHOICES, DEV_SERVER_ID, SG_DEV_MENTION_CHOICES, SG_DEV_SERVER_ID, SG_PROD_MENTION_CHOICES, SG_PROD_SERVER_ID } from '../../consts';
-import { MemberRole, DungeonType } from '../../enums';
+import { MemberRole, DungeonType, LogLevel } from '../../enums';
+import { logger } from '../logger';
 
 /**
  * A helper function to determine the mentions to use based on the server ID, role, and difficulty.
@@ -10,7 +11,7 @@ import { MemberRole, DungeonType } from '../../enums';
  * @returns An array of mentions to use.
  */
 export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: DungeonType): string[] | null => {
-	console.log(`Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
+	logger(LogLevel.INFO, `Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
 
 	let mentionChoices: Record<string, string> = {};
 	switch (String(serverId)) {
@@ -30,17 +31,17 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 	let roleMentions: string[] = [];
 	let difficultyMentions: string[] = [];
 
-	console.log(`Role provided: ${role}`);
+	logger(LogLevel.INFO, `Role provided: ${role}`);
 	if (role) {
 		const validRoles = [MemberRole.Tank, MemberRole.Healer, MemberRole.Dps].filter(r => r !== role);
-		console.log(`Roles available: ${validRoles}`);
+		logger(LogLevel.INFO, `Roles available: ${validRoles}`);
 
 
 		if (validRoles) {
 			roleMentions = validRoles.map(r => mentionChoices[`${r.toLowerCase()}_role`]).filter(Boolean);
 		}
 		else {
-			console.log(`No role mentions found for: ${validRoles}`);
+			logger(LogLevel.WARN, `No role mentions found for: ${validRoles}`);
 		}
 	}
 
@@ -53,15 +54,15 @@ export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: 
 			difficultyMentions = [difficultyMention];
 		}
 		else {
-			console.log(`No difficulty mention found for key: ${difficultyKey}`);
+			logger(LogLevel.WARN, `No difficulty mention found for key: ${difficultyKey}`);
 		}
 	}
 
 	const mentionsToReturn = [...roleMentions, ...difficultyMentions];
 
-	console.log(`Filtered role mentions (excluding the provided role and difficulties): ${roleMentions}`);
-	console.log(`Difficulty mentions: ${difficultyMentions}`);
-	console.log(`Combined mentions: ${mentionsToReturn}`);
+	logger(LogLevel.INFO, `Filtered role mentions (excluding the provided role and difficulties): ${roleMentions}`);
+	logger(LogLevel.INFO, `Difficulty mentions: ${difficultyMentions}`);
+	logger(LogLevel.INFO, `Combined mentions: ${mentionsToReturn}`);
 
 	return mentionsToReturn;
 };

@@ -25,7 +25,7 @@ export const addModal = async (interaction: ChatInputCommandInteraction, group:I
 		.setPlaceholder('Optional Notes')
 		.setRequired(false);
 
-	// console.log('Adding modal for group:', group);
+	// logger('Adding modal for group:', group);
 
 	const modal = new ModalBuilder()
 		.setCustomId(`add-group-started-by-[${group.groupId}]`)

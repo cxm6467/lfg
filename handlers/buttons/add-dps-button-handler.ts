@@ -1,8 +1,8 @@
 import { Client, Message, User } from 'discord.js';
 import { IMember } from '../../interfaces';
 import { GroupModel } from '../../models/group';
-import { getMessageByMessageId } from '../../utils';
-import { MemberRole } from '../../enums';
+import { getMessageByMessageId, logger } from '../../utils';
+import { LogLevel, MemberRole } from '../../enums';
 import { updateEmbedField } from '../../services';
 
 /**
@@ -45,11 +45,11 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 			}
 		}
 		else {
-			console.log(`User with id ${user.id} not found in group with id ${groupId}`);
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
 		}
 	}
 	else {
-		console.log(`Group with id ${groupId} not found`);
+		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
 	}
 
 };

@@ -1,12 +1,13 @@
 import { Message } from 'discord.js';
-import { MemberRole, ModalField, PartyBuffs } from '../../enums';
+import { LogLevel, MemberRole, ModalField, PartyBuffs } from '../../enums';
+import { logger } from '../../utils';
 
 export const updateEmbedField = async (message: Message|undefined, field: MemberRole | PartyBuffs | ModalField, userId: string, value?: string|number) => {
 	const embed = message?.embeds[0];
 
-	console.log('Embed fields:', embed?.fields);
+	logger(LogLevel.DEBUG, `Embed fields: ${embed?.fields}`);
 	const roleField = embed?.fields.find(x => x.name.replace(/\*/g, '').trim() === field.toString().replace(/ /g, ''));
-	console.log('Role field:', roleField);
+	logger(LogLevel.DEBUG, `Role field: ${roleField}`);
 
 	if (roleField) {
 		switch (field) {
@@ -33,7 +34,7 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 		case ModalField.StartTime:
 		// Convert the value from milliseconds to seconds (if necessary)
 		{ const secondsValue = Math.floor((value as number) / 1000);
-			console.log('Setting start time:', secondsValue);
+			logger(LogLevel.INFO, `Setting start time: ${secondsValue}`);
 
 			// Use the secondsValue for the Discord timestamp format
 			roleField.value = `<t:${secondsValue}:F>`;
@@ -46,7 +47,7 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 		}
 	}
 	else {
-		console.log('Role field not found', roleField);
+		logger(LogLevel.WARN, `Role field not found for field: ${roleField}`);
 	}
 
 	await message?.edit({ embeds: [embed ?? {}] });

@@ -1,4 +1,6 @@
 import { Client } from 'discord.js';
+import { LogLevel } from '../../enums';
+import { logger } from '../logger';
 
 /**
  * Fetches a thread by its message ID.
@@ -11,7 +13,7 @@ import { Client } from 'discord.js';
 export const getThreadByMessageId = async (client: Client, threadId: string) => {
 	try {
 		const channel = await client.channels.fetch(threadId);
-		console.log('Channel:', channel);
+		logger(LogLevel.INFO, 'Channel: ${channel}');
 		if (channel && channel.isThread()) {
 			return channel;
 		}
@@ -20,6 +22,6 @@ export const getThreadByMessageId = async (client: Client, threadId: string) => 
 		}
 	}
 	catch (error) {
-		console.error(`Error fetching thread with id ${threadId}:`, error);
+		logger(LogLevel.ERROR, `Error fetching thread with id ${threadId}: ${error}`);
 	}
 };
