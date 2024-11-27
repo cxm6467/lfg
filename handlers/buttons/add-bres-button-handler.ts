@@ -10,34 +10,54 @@ import { LogLevel, PartyBuffs } from '../../enums';
  * @param client - The Discord client instance.
  * @param groupId - The ID of the group to which the Bres button is being added.
  * @param user - The Discord user who is adding the Bres button.
- *
- * @returns A promise that resolves when the Bres button has been handled.
- *
- * This function performs the following steps:
- * 1. Finds the group by the provided groupId.
- * 2. If the group exists and does not already have a Bres, it sets the group's hasBres property to true.
- * 3. Finds the member in the group who matches the provided user and sets their hasBres property to true.
- * 4. Saves the updated group to the database.
- * 5. Retrieves the message associated with the group and updates the embed field to reflect the new Bres status.
- *
- * If the group is not found, it logs an error message to the console.
  */
-export const addBresButtonHandler = async (client: Client, groupId: string, user:User) => {
-	const group = await GroupModel.findOne({ groupId });
+export const addBresButtonHandler = async (client: Client, groupId: string, user: User) => {
+	try {
+		const group = await GroupModel.findOne({ groupId });
 
-	if (group) {
-		if (!group.hasBres) {
-			group.hasBres = true;
-			const member = group?.members?.find(m => m.userId === user.id);
-			if (member) {
-				member.hasBres = true;
-			}
-			await group.save();
-			const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
-			await updateEmbedField(embedMessage ?? {} as Message, PartyBuffs.Bres, user.id);
+		if (!group) {
+			logger(LogLevel.WARN, `Group with ID ${groupId} not found`);
+			await user.send('The specified group was not found.');
+			return;
 		}
+
+		// Check if user is part of the group
+		const member = group.members?.find(m => m.userId === user.id);
+		if (!member) {
+			logger(LogLevel.WARN, `User ${user.id} is not in group ${groupId}`);
+			await user.send('You are not a member of this group and cannot update it.');
+			return;
+		}
+
+		// Check if the group already has Bres
+		if (group?.members?.some(m => m.hasBres)) {
+			logger(LogLevel.WARN, `Group with ID ${groupId} already has Bres`);
+			await user.send('The group already has Bres set.');
+			return;
+		}
+
+		group.hasBres = true;
+		member.hasBres = true;
+		await group.save();
+
+		const embedMessage: Message | undefined = await getMessageByMessageId(
+			client,
+			group.messageId ?? '',
+			group.guildId ?? '',
+			group.channelId ?? '',
+		);
+
+		if (embedMessage) {
+			await updateEmbedField(embedMessage, PartyBuffs.Bres, user.id);
+		}
+		else {
+			logger(LogLevel.WARN, `Message for group ${groupId} not found`);
+			await user.send('Failed to update the group message embed.');
+		}
+
 	}
-	else {
-		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+	catch (error) {
+		logger(LogLevel.ERROR, `Error handling addBresButton: ${(error as Error).message}`);
+		await user.send('An error occurred while trying to add Bres.');
 	}
 };

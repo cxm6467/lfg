@@ -48,6 +48,8 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 			return member;
 		}));
 
+		const updatedMembers = group?.members?.filter(member => member.userId !== user.id);
+		group.members = updatedMembers;
 		await group.save();
 
 		const embedMessage = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
