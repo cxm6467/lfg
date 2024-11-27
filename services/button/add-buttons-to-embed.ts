@@ -44,12 +44,12 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 
 			const addLust = new ButtonBuilder()
 				.setCustomId(`addLust[${group.groupId}]`)
-				.setLabel(`Add Lust${CustomEmoji.Lust}`)
+				.setLabel('Add Lust')
 				.setStyle(ButtonStyle.Secondary);
 
 			const addBres = new ButtonBuilder()
 				.setCustomId(`addBres[${group.groupId}]`)
-				.setLabel(`Add Bres${CustomEmoji.Bres}`)
+				.setLabel('Add Bres')
 				.setStyle(ButtonStyle.Secondary);
 
 			const clearRole = new ButtonBuilder()

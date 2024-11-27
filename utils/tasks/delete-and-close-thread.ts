@@ -132,13 +132,38 @@ export const finishGroup = async (client: Client, groupId:string, userId: string
 	}
 };
 
-/**
- * Checks if the given timestamp is more than 24 hours in the past.
- *
- * @param timestamp - The date and time to check.
- * @returns `true` if the timestamp is more than 24 hours in the past, otherwise `false`.
- */
 export const isMoreThan24Hours = (timestamp: Date): boolean => {
-	const futureDate = new Date(timestamp.getTime() + 24 * 60 * 60 * 1000);
-	return new Date() > futureDate;
+	const now = new Date();
+	const timeDifference = now.getTime() - timestamp.getTime();
+
+	logger(LogLevel.DEBUG, `Current time: ${now}`);
+	logger(LogLevel.DEBUG, `Timestamp: ${timestamp}`);
+	logger(LogLevel.DEBUG, `Time difference in milliseconds: ${timeDifference}`);
+
+	const timeDifferenceInHours = Math.floor(timeDifference / (1000 * 60 * 60));
+	const timeDifferenceInMinutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+	const hoursText = timeDifferenceInHours === 1 ? 'hour' : 'hours';
+	const minutesText = timeDifferenceInMinutes === 1 ? 'minute' : 'minutes';
+
+	logger(LogLevel.DEBUG, `Time difference: ${timeDifferenceInHours} ${hoursText}, ${timeDifferenceInMinutes} ${minutesText}`);
+
+	const remainingMilliseconds = 24 * 60 * 60 * 1000 - timeDifference;
+	if (remainingMilliseconds > 0) {
+		const remainingHours = Math.floor(remainingMilliseconds / (1000 * 60 * 60));
+		const remainingMinutes = Math.floor((remainingMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+
+		const remainingHoursText = remainingHours === 1 ? 'hour' : 'hours';
+		const remainingMinutesText = remainingMinutes === 1 ? 'minute' : 'minutes';
+
+		logger(
+			LogLevel.HIGHLIGHT,
+			`Time remaining before 24 hours: ${remainingHours} ${remainingHoursText}, ${remainingMinutes} ${remainingMinutesText}`,
+		);
+	}
+	else {
+		logger(LogLevel.DEBUG, 'The timestamp has already exceeded 24 hours.');
+	}
+
+	return timeDifference > 24 * 60 * 60 * 1000;
 };

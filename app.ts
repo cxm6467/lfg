@@ -49,15 +49,14 @@ client.on(Events.InteractionCreate, async (interaction) => {
 		logger(LogLevel.INFO, `Group message id: ${groupMessage?.id}`);
 
 		logger(LogLevel.DEBUG, `Modal data: ${JSON.stringify(modalData)}`);
-
-
-		await model?.updateOne({ messageId: groupMessage?.id });
+		logger(LogLevel.DEBUG, `timestamp: ${epochTimestamp} => ${new Date(epochTimestamp! * 1000)}`);
+		await model?.updateOne({ messageId: groupMessage?.id, startTime: new Date(epochTimestamp! * 1000), notes });
 		await addEmbed(client, groupId ?? '', interaction.user.id);
 		await addEmbedButtons(client, groupId ?? '');
 
 		const msg = await getMessageByMessageId(client, groupMessage?.id ?? '', model?.guildId ?? '', model?.channelId ?? '');
 
-		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(msg?.embeds[0].fields)}`);
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(msg?.embeds[0]?.fields)}`);
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
@@ -80,6 +79,6 @@ setInterval(async () => {
 	catch (error) {
 		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
 	}
-}, 300000);
+}, 60000);
 
 client.login(process.env.DISCORD_BOT_TOKEN!);

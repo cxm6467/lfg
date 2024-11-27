@@ -23,6 +23,9 @@ export const logger = (level: LogLevel, msg: string) => {
 	case LogLevel.ERROR:
 		console.log(chalk.red(`${ prefix }| ERROR]: ${ msg }`));
 		break;
+	case LogLevel.HIGHLIGHT:
+		console.log(`${ prefix }| HIGHLIGHT]: ${ chalk.bgYellow(msg) }`);
+		break;
 	default:
 		console.log(chalk.bgBlue(`${ prefix }| LOG]: ${ msg }`));
 		break;
