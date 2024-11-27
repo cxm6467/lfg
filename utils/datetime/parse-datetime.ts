@@ -50,7 +50,6 @@ export const getUnixTimestamp = (dungeonDatetimeStr: string, timeZone: string = 
 		return 0;
 	}
 };
-
 /**
  * Helper function to parse a datetime string and convert it to a Unix timestamp.
  *
@@ -66,7 +65,16 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 	const normalizedInput = datetimeStr.trim();
 	logger(LogLevel.DEBUG, `Normalized datetime string: '${normalizedInput}'`);
 
-	const parsedDate = DateTime.fromFormat(normalizedInput, 'MM/dd/yyyy h:mm a', { zone: timeZone });
+	let parsedDate = DateTime.fromISO(normalizedInput, { zone: timeZone });
+
+	if (!parsedDate.isValid) {
+		logger(LogLevel.DEBUG, 'ISO parsing failed, attempting fallback parsing.');
+
+		const nativeDate = new Date(normalizedInput);
+		if (!isNaN(nativeDate.getTime())) {
+			parsedDate = DateTime.fromJSDate(nativeDate, { zone: timeZone });
+		}
+	}
 
 	if (!parsedDate.isValid) {
 		throw new Error(`Invalid date: Could not parse '${normalizedInput}' into a valid DateTime object.`);
