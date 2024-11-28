@@ -16,7 +16,7 @@ const client = new Client({
 });
 
 client.once(Events.ClientReady, async (readyClient) => {
-	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`);
+	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`, readyClient.guilds.cache.map((guild) => guild.name).join(', '));
 	await mongooseConnectionHelper();
 	await registerCommands();
 	const groups = await GroupModel.find({ archived: { $ne: true } });
@@ -27,7 +27,7 @@ client.once(Events.ClientReady, async (readyClient) => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (interaction.isCommand()) {
-		logger(LogLevel.DEBUG, `Interaction received: ${interaction.commandName}`);
+		logger(LogLevel.DEBUG, `Interaction received: ${interaction.commandName}`, interaction.guild?.id);
 		if (interaction.commandName === 'lfm') await processInteractionResponse(interaction as ChatInputCommandInteraction);
 	}
 	if (interaction.isModalSubmit()) {
@@ -38,31 +38,31 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			modalData = await processModalSubmit(interaction);
 		}
 		catch (error) {
-			logger(LogLevel.ERROR, `Error processing modal submit: ${(error as Error).message}`);
+			logger(LogLevel.ERROR, `Error processing modal submit: ${(error as Error).message}`, interaction.guild?.id);
 			return;
 		}
 		if (!modalData) {
-			logger(LogLevel.ERROR, 'Failed to process modal submit');
+			logger(LogLevel.ERROR, 'Failed to process modal submit', interaction.guild?.id);
 			return;
 		}
 		const { groupMessage, epochTimestamp, notes } = modalData;
-		logger(LogLevel.INFO, `Group message id: ${groupMessage?.id}`);
+		logger(LogLevel.INFO, `Group message id: ${groupMessage?.id}`, interaction.guild?.id);
 
-		logger(LogLevel.DEBUG, `Modal data: ${JSON.stringify(modalData)}`);
-		logger(LogLevel.DEBUG, `timestamp: ${epochTimestamp} => ${new Date(epochTimestamp! * 1000)}`);
+		logger(LogLevel.DEBUG, `Modal data: ${JSON.stringify(modalData)}`, interaction.guild?.id);
+		logger(LogLevel.DEBUG, `timestamp: ${epochTimestamp} => ${new Date(epochTimestamp! * 1000)}`, interaction.guild?.id);
 		await model?.updateOne({ messageId: groupMessage?.id, startTime: new Date(epochTimestamp! * 1000), notes });
 		await addEmbed(client, groupId ?? '', interaction.user.id);
-		await addEmbedButtons(client, groupId ?? '');
+		await addEmbedButtons(client, groupId ?? '', interaction?.guild?.id ?? '');
 
 		const msg = await getMessageByMessageId(client, groupMessage?.id ?? '', model?.guildId ?? '', model?.channelId ?? '');
 
-		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(msg?.embeds[0]?.fields)}`);
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(msg?.embeds[0]?.fields)}`, interaction.guild?.id);
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
 	}
 	if (interaction.isButton()) {
-		logger(LogLevel.INFO, `Button interaction: ${interaction.customId}`);
+		logger(LogLevel.INFO, `Button interaction: ${interaction.customId}`, interaction.guild?.id);
 		const matchResult = interaction.customId.match(/^([^[]+)\[([^\]]+)\]/);
 		const buttonAction = matchResult?.[1];
 		const groupId = matchResult?.[2];
@@ -74,10 +74,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
 setInterval(async () => {
 	try {
 		await archiveAndDeleteThreadAndEmbed(client);
-		logger(LogLevel.INFO, 'Successfully processed groups');
+		logger(LogLevel.INFO, 'Successfully processed groups', client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
+		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 }, 60000);
 

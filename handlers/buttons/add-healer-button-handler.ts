@@ -27,8 +27,11 @@ export const addHealerButtonHandler = async (client: Client, groupId: string, us
 	if (group) {
 		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
 		if (groupMember) {
+			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
 			if (groupMember.role === MemberRole.None) {
+				logger(LogLevel.INFO, `User with id ${user.id} has no role in group with id ${groupId}`);
 				if (group.members?.filter(member => member.role === MemberRole.Healer).length === 0) {
+					logger(LogLevel.INFO, `No healer found in group with id ${groupId}`);
 					groupMember.role = MemberRole.Healer;
 					await group.save();
 					const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');

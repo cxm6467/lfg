@@ -50,6 +50,7 @@ export const getUnixTimestamp = (dungeonDatetimeStr: string, timeZone: string = 
 		return 0;
 	}
 };
+
 /**
  * Helper function to parse a datetime string and convert it to a Unix timestamp.
  *
@@ -65,22 +66,34 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 	const normalizedInput = datetimeStr.trim();
 	logger(LogLevel.DEBUG, `Normalized datetime string: '${normalizedInput}'`);
 
-	let parsedDate = DateTime.fromISO(normalizedInput, { zone: timeZone });
+	const formats = [
+		'MM/dd/yyyy h:mm a',
+		'MM/dd/yyyy HH:mm',
+		'yyyy-MM-dd HH:mm:ss',
+		'dd-MM-yyyy HH:mm',
+		'yyyy/MM/dd HH:mm',
+		'MM-dd-yyyy h:mm a',
+	];
 
-	if (!parsedDate.isValid) {
-		logger(LogLevel.DEBUG, 'ISO parsing failed, attempting fallback parsing.');
+	let parsedDate: DateTime | null = null;
 
-		const nativeDate = new Date(normalizedInput);
-		if (!isNaN(nativeDate.getTime())) {
-			parsedDate = DateTime.fromJSDate(nativeDate, { zone: timeZone });
+	for (const format of formats) {
+		try {
+			parsedDate = DateTime.fromFormat(normalizedInput, format, { zone: timeZone });
+		}
+		catch (error) {
+			logger(LogLevel.ERROR, `Error parsing with format '${format}': ${(error as Error).message}`);
+			continue;
+		}
+		if (parsedDate.isValid) {
+			logger(LogLevel.DEBUG, `Parsed DateTime with format '${format}': ${parsedDate.toString()}`);
+			break;
 		}
 	}
 
-	if (!parsedDate.isValid) {
+	if (!parsedDate || !parsedDate.isValid) {
 		throw new Error(`Invalid date: Could not parse '${normalizedInput}' into a valid DateTime object.`);
 	}
-
-	logger(LogLevel.DEBUG, `Parsed DateTime (time zone applied): ${parsedDate.toString()}`);
 
 	const utcDate = parsedDate.toUTC();
 	const unixTimestamp = Math.floor(utcDate.toSeconds());
@@ -88,3 +101,4 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 	logger(LogLevel.DEBUG, `UTC DateTime: ${utcDate.toString()}, Unix timestamp: ${unixTimestamp}`);
 	return unixTimestamp;
 };
+

@@ -1,8 +1,25 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, MessageActionRowComponentBuilder } from 'discord.js';
 import { getMessageByMessageId, logger } from '../../utils';
 import { GroupModel } from '../../models/group';
-import { CustomEmoji, LogLevel } from '../../enums';
+import { LogLevel } from '../../enums';
+import { SG_DEV_SERVER_ID, SG_PROD_SERVER_ID } from '../../consts';
 
+
+enum CustomEmoji {
+  Tank = '🛡️',
+  Healer = '💉',
+  Dps = '⚔️',
+  Bres = '🪦',
+  Lust = '🍖',
+}
+
+enum SGEmoji {
+  Tank = '<:wow_tank:868737094242152488>',
+  Healer = '<:wow_healer:868737094258950144>',
+  Dps = '<:wow_dps:868737094011486229>',
+  Bres = '🪦',
+  Lust = '🍖',
+}
 /**
  * Adds interactive buttons to an existing embed message in a Discord channel.
  *
@@ -17,7 +34,7 @@ import { CustomEmoji, LogLevel } from '../../enums';
  *
  * @throws Will log an error message if the group, embed message, or required IDs are not found.
  */
-export const addEmbedButtons = async (client: Client, groupId: string) => {
+export const addEmbedButtons = async (client: Client, groupId: string, guildId:string) => {
 	const group = await GroupModel.findOne({ groupId });
 
 	if (group?.embedId && group.guildId && group.channelId) {
@@ -27,20 +44,25 @@ export const addEmbedButtons = async (client: Client, groupId: string) => {
 		if (embed) {
 			const updatedEmbed = EmbedBuilder.from(embed);
 
+			const emojiEnum = (guildId === SG_DEV_SERVER_ID || guildId === SG_PROD_SERVER_ID) ? SGEmoji : CustomEmoji;
+
 			const addDps = new ButtonBuilder()
 				.setCustomId(`addDps[${group.groupId}]`)
-				.setLabel(`${CustomEmoji.Dps}`)
-				.setStyle(ButtonStyle.Primary);
+				.setLabel('Dps')
+				.setStyle(ButtonStyle.Primary)
+				.setEmoji(`${emojiEnum.Dps}`);
 
 			const addHealer = new ButtonBuilder()
 				.setCustomId(`addHealer[${group.groupId}]`)
-				.setLabel(`${CustomEmoji.Healer}`)
-				.setStyle(ButtonStyle.Primary);
+				.setLabel('Healer')
+				.setStyle(ButtonStyle.Primary)
+				.setEmoji(`${emojiEnum.Healer}`);
 
 			const addTank = new ButtonBuilder()
 				.setCustomId(`addTank[${group.groupId}]`)
-				.setLabel(`${CustomEmoji.Tank}`)
-				.setStyle(ButtonStyle.Primary);
+				.setLabel('Tank')
+				.setStyle(ButtonStyle.Primary)
+				.setEmoji(`${emojiEnum.Tank}`);
 
 			const addLust = new ButtonBuilder()
 				.setCustomId(`addLust[${group.groupId}]`)

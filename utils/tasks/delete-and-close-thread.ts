@@ -122,9 +122,10 @@ export const finishGroup = async (client: Client, groupId:string, userId: string
 		}
 	}
 	else {
-		logger(LogLevel.WARN, `Client ${client.user?.id} user not found in group ${groupId}`);
+		logger(LogLevel.WARN, `User ${userId} not found in group ${groupId}`);
 		try {
-			client.user?.send('You are not in this group');
+			const user = await client.users.fetch(userId);
+			await user.send('You are not a member of this group.');
 		}
 		catch (error) {
 			logger(LogLevel.ERROR, `Failed to send message to user: ${JSON.stringify(error)}`);
