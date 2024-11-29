@@ -22,35 +22,50 @@ import { updateEmbedField } from '../../services';
  * - If the group or user is not found, appropriate messages are logged to the console.
  */
 export const addDpsButtonHandler = async (client: Client, groupId: string, user: User) => {
+	try {
+		const group = await GroupModel.findOne({ groupId });
 
-	const group = await GroupModel.findOne({ groupId });
+		if (!group) {
+			logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+			return;
+		}
 
-	if (group) {
-		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
-		if (groupMember) {
-			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-			if (groupMember.role === MemberRole.None) {
-				if ((group.members?.filter(member => member.role === MemberRole.Dps).length ?? 0) <= 2
-          && (group.members?.filter(member => member.userId !== user?.id).length ?? 0) < 1) {
-					groupMember.role = MemberRole.Dps;
-					await group.save();
-					const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
-					await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
-				}
-				else {
-					await user.send('You can only have 3 dps roles in a group.');
-				}
+		const members = group.members ?? [];
+		const existingMember = members.find((member: IMember) => member.userId === user.id);
+
+		if (existingMember) {
+			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
+
+			if (existingMember.role !== MemberRole.None) {
+				await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
+				return;
+			}
+
+			const dpsCount = members.filter(member => member.role === MemberRole.Dps).length;
+			const otherRolesCount = members.filter(member => member.userId !== user.id && member.role === MemberRole.None).length;
+
+			if (dpsCount < 3 && otherRolesCount < 1) {
+				existingMember.role = MemberRole.Dps;
+				await group.save();
+
+				const embedMessage = await getMessageByMessageId(
+					client,
+					group.messageId ?? '',
+					group.guildId ?? '',
+					group.channelId ?? '',
+				);
+
+				await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
 			}
 			else {
-				await user.send('You already have a role in this group.');
+				await user.send('You can only have 3 DPS roles in a group.');
 			}
 		}
 		else {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
 		}
 	}
-	else {
-		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+	catch (error: unknown) {
+		logger(LogLevel.ERROR, `Error in addDpsButtonHandler: ${(error as Error).message}`);
 	}
-
 };

@@ -22,34 +22,53 @@ import { updateEmbedField } from '../../services';
  * - If the user has no role and there is no Tank in the group, assigns the Tank role to the user, updates the group, and updates the embed message.
  */
 export const addTankButtonHandler = async (client: Client, groupId: string, user: User) => {
-	const group = await GroupModel.findOne({ groupId });
+	try {
+		// Fetch the group from the database
+		const group = await GroupModel.findOne({ groupId });
 
-	if (group) {
-		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
-		if (groupMember) {
-			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-			if (groupMember.role === MemberRole.None) {
-				logger(LogLevel.INFO, `User with id ${user.id} has no role in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-				if (group.members?.filter(member => member.role === MemberRole.Tank).length === 0) {
-					logger(LogLevel.INFO, `No Tank role found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-					groupMember.role = MemberRole.Tank;
-					await group.save();
-					const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
-					await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Tank, user.id);
-				}
-				else {
-					await user.send('You can only have 1 Tank in a group.');
-				}
-			}
-			else {
-				await user.send('You already have a role in this group.');
-			}
+		if (!group) {
+			logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+			return;
 		}
-		else {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+
+		const members = group.members ?? [];
+		const existingMember = members.find((member: IMember) => member.userId === user.id);
+
+		if (!existingMember) {
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
+			return;
 		}
+
+		logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
+
+		if (existingMember.role !== MemberRole.None) {
+			await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
+			return;
+		}
+
+		const tankCount = members.filter(member => member.role === MemberRole.Tank).length;
+
+		if (tankCount > 0) {
+			await user.send('You can only have 1 Tank in a group.');
+			return;
+		}
+
+		// Assign the Tank role and save the group
+		existingMember.role = MemberRole.Tank;
+		await group.save();
+
+		const embedMessage = await getMessageByMessageId(
+			client,
+			group.messageId ?? '',
+			group.guildId ?? '',
+			group.channelId ?? '',
+		);
+
+		await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Tank, user.id);
+
+		logger(LogLevel.INFO, `Tank role assigned to user with id ${user.id} in group with id ${groupId}`);
 	}
-	else {
-		logger(LogLevel.WARN, `Group with id ${groupId} not found`, client.guilds.cache.map((guild) => guild.name).join(', '));
+	catch (error) {
+		logger(LogLevel.ERROR, `Error in addTankButtonHandler: ${(error as Error).message}`);
 	}
 };
