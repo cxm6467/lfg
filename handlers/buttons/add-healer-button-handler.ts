@@ -27,11 +27,12 @@ export const addHealerButtonHandler = async (client: Client, groupId: string, us
 	if (group) {
 		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
 		if (groupMember) {
-			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 			if (groupMember.role === MemberRole.None) {
 				logger(LogLevel.INFO, `User with id ${user.id} has no role in group with id ${groupId}`);
 				if (group.members?.filter(member => member.role === MemberRole.Healer).length === 0) {
-					logger(LogLevel.INFO, `No healer found in group with id ${groupId}`);
+					logger(LogLevel.INFO, `No healer found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 					groupMember.role = MemberRole.Healer;
 					await group.save();
 					const embedMessage: Message | undefined = await getMessageByMessageId(client, group.messageId ?? '', group.guildId ?? '', group.channelId ?? '');
@@ -46,11 +47,11 @@ export const addHealerButtonHandler = async (client: Client, groupId: string, us
 			}
 		}
 		else {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		}
 	}
 	else {
-		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+		logger(LogLevel.WARN, `Group with id ${groupId} not found`, client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 
 };

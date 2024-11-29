@@ -37,14 +37,14 @@ export const addLustButtonHandler = async (client: Client, groupId: string, user
 			await updateEmbedField(embedMessage ?? {} as Message, PartyBuffs.Lust, user.id);
 		}
 		else {
-			logger(LogLevel.WARN, `Group with id ${groupId} already has Lust or user is not in the group`);
+			logger(LogLevel.WARN, `Group with id ${groupId} already has Lust or user is not in the group`, client.guilds.cache.map((guild) => guild.name).join(', '));
 			if (!group.members?.some(m => m.userId === user.id)) {
 				user.send('You are not in the group');
 			}
 		}
 	}
 	else {
-		logger(LogLevel.WARN, `Group with id ${groupId} not found`);
+		logger(LogLevel.WARN, `Group with id ${groupId} not found`, client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 
 };

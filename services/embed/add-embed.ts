@@ -33,7 +33,7 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 
 		const thumbnailUrl = convertDungeonNameToUrl(group.dungeon?.name);
 		const embedColor = getEmbedColor(group.dungeon?.name) as ColorResolvable;
-		logger(LogLevel.INFO, `Thumbnail URL: ${thumbnailUrl}, Dungeon: ${group.dungeon?.name}`);
+		logger(LogLevel.INFO, `Thumbnail URL: ${thumbnailUrl}, Dungeon: ${group.dungeon?.name}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 
 		const embed = new EmbedBuilder()
 			.setColor(embedColor)
@@ -94,16 +94,16 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		);
 		await group.updateOne({ embedId: embedMessage?.id, threadId: thread?.id });
 
-		logger(LogLevel.INFO, `Members: ${JSON.stringify(group.members)}`);
-		logger(LogLevel.INFO, `Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`);
+		logger(LogLevel.INFO, `Members: ${JSON.stringify(group.members)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, `Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
 
 		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
-		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`);
-		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`);
+		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		await thread?.send(`${mentions?.join(' ')}`);
 	}
 	else {
-		logger(LogLevel.WARN, 'Group not found');
+		logger(LogLevel.WARN, 'Group not found', client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 };

@@ -98,13 +98,13 @@ export const addEmbedButtons = async (client: Client, groupId: string, guildId:s
 				components: [rowOne, rowTwo, rowThree],
 			});
 
-			logger(LogLevel.INFO, 'Buttons added successfully.');
+			logger(LogLevel.INFO, 'Buttons added successfully.', client.guilds.cache.map((guild) => guild.name).join(', '));
 		}
 		else {
-			logger(LogLevel.ERROR, 'Embed not found in the message.');
+			logger(LogLevel.ERROR, 'Embed not found in the message.', client.guilds.cache.map((guild) => guild.name).join(', '));
 		}
 	}
 	else {
-		logger(LogLevel.WARN, `Message ID, Guild ID, or Channel ID not found in group. Embed ID: ${group?.embedId}, Guild ID: ${group?.guildId}, Channel ID: ${group?.channelId}, Message ID: ${group?.messageId}`);
+		logger(LogLevel.WARN, `Message ID, Guild ID, or Channel ID not found in group. Embed ID: ${group?.embedId}, Guild ID: ${group?.guildId}, Channel ID: ${group?.channelId}, Message ID: ${group?.messageId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 	}
 };

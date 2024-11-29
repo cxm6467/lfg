@@ -28,7 +28,7 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 	if (group) {
 		const groupMember = group.members?.find((member: IMember) => member.userId === user.id);
 		if (groupMember) {
-			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
+			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 			if (groupMember.role === MemberRole.None) {
 				if ((group.members?.filter(member => member.role === MemberRole.Dps).length ?? 0) <= 2
           && (group.members?.filter(member => member.userId !== user?.id).length ?? 0) < 1) {
@@ -46,7 +46,7 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 			}
 		}
 		else {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
+			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		}
 	}
 	else {
