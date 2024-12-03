@@ -67,11 +67,16 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 	logger(LogLevel.DEBUG, `Normalized datetime string: '${normalizedInput}'`);
 
 	const formats = [
+		'M/d/yyyy h:mm a',
+		'M/d/yyyy HH:mm',
 		'MM/dd/yyyy h:mm a',
 		'MM/dd/yyyy HH:mm',
 		'yyyy-MM-dd HH:mm:ss',
+		'd-M-yyyy HH:mm',
 		'dd-MM-yyyy HH:mm',
+		'yyyy/M/d HH:mm',
 		'yyyy/MM/dd HH:mm',
+		'M-d-yyyy h:mm a',
 		'MM-dd-yyyy h:mm a',
 	];
 

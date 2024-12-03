@@ -33,9 +33,13 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 
 		const thumbnailUrl = convertDungeonNameToUrl(group.dungeon?.name);
 		const embedColor = getEmbedColor(group.dungeon?.name) as ColorResolvable;
+		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
+
+		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
 		logger(LogLevel.INFO, `Thumbnail URL: ${thumbnailUrl}, Dungeon: ${group.dungeon?.name}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 
 		const embed = new EmbedBuilder()
+			.setTitle(group.groupName || 'Group Name')
 			.setColor(embedColor)
 			.setThumbnail(thumbnailUrl)
 			.addFields([
@@ -96,12 +100,10 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 
 		logger(LogLevel.INFO, `Members: ${JSON.stringify(group.members)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		logger(LogLevel.INFO, `Member: ${group.members?.find(member => member.userId === userId)}\n userId: ${userId}\n client user id: ${userId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
 
-		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
 		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`, client.guilds.cache.map((guild) => guild.name).join(', '));
 		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-		await thread?.send(`${mentions?.join(' ')}`);
+		await thread?.send(`${group.groupName || 'Group Name'}`);
 	}
 	else {
 		logger(LogLevel.WARN, 'Group not found', client.guilds.cache.map((guild) => guild.name).join(', '));

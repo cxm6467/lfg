@@ -3,7 +3,7 @@ import { GroupModel } from '../../models/group';
 import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
 import { LogLevel } from '../../enums';
-import { formatDungeonDateTime, getUnixTimestamp, logger } from '../../utils';
+import { formatDungeonDateTime, getUnixTimestamp, logger, mentionHelper } from '../../utils';
 
 /**
  * Processes the modal submit interaction from Discord.
@@ -60,8 +60,11 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		group.notes = notes;
 		await group.save();
 
+		const initialMemberRole = group.members?.find(member => member.userId === interaction.user.id)?.role;
+
+		const mentions = mentionHelper(group.guildId ?? '', initialMemberRole, group.dungeon.type);
 		const groupMessage = await interaction.reply({
-			content: `Submission processed! Group start time: ${parsedDateTime}`,
+			content: `${mentions?.join(' ')}`,
 			fetchReply: true,
 		});
 
