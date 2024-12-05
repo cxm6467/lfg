@@ -123,6 +123,7 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 		'MM-dd-yyyy hh:mm a',
 		'MM-dd-yyyy H:mm',
 		'MM-dd-yyyy HH:mm',
+		'MM/dd/yy HH:mm',
 	];
 
 	let parsedDate: DateTime | null = null;
