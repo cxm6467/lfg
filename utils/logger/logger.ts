@@ -4,18 +4,21 @@ import { Logtail } from '@logtail/node';
 import dotenv from 'dotenv';
 
 dotenv.config();
-let logtail: Logtail;
-try {
-	if (process.env.LOGTAIL_SOURCE_TOKEN) {
+
+// Declare logtail as a potentially undefined variable initially
+let logtail: Logtail | undefined;
+
+if (process.env.LOGTAIL_SOURCE_TOKEN) {
+	try {
+		logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
 		console.warn('Logger initialized');
 	}
-	else {
-		console.warn('Logtail source token is not set.');
+	catch (error) {
+		console.error('Failed to initialize Logtail:', error);
 	}
-	logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
 }
-catch (error) {
-	console.error('Failed to initialize logger:', error);
+else {
+	console.warn('Logtail source token is not set.');
 }
 
 /**
@@ -23,35 +26,57 @@ catch (error) {
  *
  * @param {LogLevel} level - The log level of the message (DEBUG, INFO, WARN, ERROR).
  * @param {string} msg - The message to log.
+ * @param {string} [guildId] - Optional guild ID for the log message.
  */
-export const logger = (level: LogLevel, msg: string, guildId ?:string) => {
-	const prefix = `[${new Date().toISOString()} `;
+export const logger = (level: LogLevel, msg: string, guildId?: string) => {
+	const prefix = `[${new Date().toISOString()}] | ${guildId ?? 'Server unknown'}`;
+
+	// Log the message to the console using different colors based on the level
+	const logMessage = `${prefix} | ${level}]: ${msg}`;
 
 	switch (level) {
 	case LogLevel.DEBUG:
-		console.log(chalk.magenta(`${prefix}| ${guildId ?? 'Server unknown'} | DEBUG]: ${msg}`));
-		logtail.debug(msg);
+		console.log(chalk.magenta(logMessage));
 		break;
 	case LogLevel.INFO:
-		console.log(chalk.grey(`${prefix}| ${guildId ?? 'Server unknown'} | INFO]: ${ msg }`));
-		logtail.info(msg);
+		console.log(chalk.grey(logMessage));
 		break;
 	case LogLevel.WARN:
-		console.log(chalk.yellow(`${prefix}| ${guildId ?? 'Server unknown'} | WARN]: ${ msg }`));
-		logtail.warn(msg);
+		console.log(chalk.yellow(logMessage));
 		break;
 	case LogLevel.ERROR:
-		console.log(chalk.red(`${prefix}| ${guildId ?? 'Server unknown'} | ERROR]: ${ msg }`));
-		logtail.error(msg);
+		console.log(chalk.red(logMessage));
 		break;
 	case LogLevel.HIGHLIGHT:
-		console.log(`${prefix}| ${guildId ?? 'Server unknown'} | HIGHLIGHT]: ${ chalk.bgYellow(msg) }`);
-		logtail.log(msg);
+		console.log(`${logMessage} ${chalk.bgYellow(msg)}`);
 		break;
 	default:
-		console.log(chalk.bgBlue(`${prefix}| ${guildId ?? 'Server unknown'} | LOG]: ${ msg }`));
-		logtail.log(msg);
+		console.log(chalk.bgBlue(logMessage));
 		break;
 	}
-	logtail.flush();
+
+	// If Logtail is initialized, send the log to it
+	if (logtail) {
+		switch (level) {
+		case LogLevel.DEBUG:
+			logtail.debug(msg);
+			break;
+		case LogLevel.INFO:
+			logtail.info(msg);
+			break;
+		case LogLevel.WARN:
+			logtail.warn(msg);
+			break;
+		case LogLevel.ERROR:
+			logtail.error(msg);
+			break;
+		case LogLevel.HIGHLIGHT:
+			logtail.log(msg);
+			break;
+		default:
+			logtail.log(msg);
+			break;
+		}
+		logtail.flush();
+	}
 };
