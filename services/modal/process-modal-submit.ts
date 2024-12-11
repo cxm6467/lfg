@@ -60,11 +60,11 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		group.notes = notes;
 		await group.save();
 
-		const initialMemberRole = group.members?.find(member => member.userId === interaction.user.id)?.role;
+		// const initialMemberRole = group.members?.find(member => member.userId === interaction.user.id)?.role;
 
-		const mentions = mentionHelper(group.guildId ?? '', initialMemberRole, group.dungeon.type);
+		// const mentions = mentionHelper(group.guildId ?? '', initialMemberRole, group.dungeon.type);
 		const groupMessage = await interaction.reply({
-			content: `${mentions?.join(' ')}`,
+			content: 'Good luck, Don\'t die!',
 			fetchReply: true,
 		});
 
