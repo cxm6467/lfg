@@ -33,25 +33,27 @@ export const logger = (level: LogLevel, msg: string, guildId ?:string) => {
 		logtail.debug(msg);
 		break;
 	case LogLevel.INFO:
-		console.log(chalk.grey(`${prefix}| ${guildId ?? 'Server unknown'} | INFO]: ${ msg }`));
+		console.log(chalk.grey(`${prefix} | INFO]: ${ msg }`));
 		logtail.info(msg);
 		break;
 	case LogLevel.WARN:
-		console.log(chalk.yellow(`${prefix}| ${guildId ?? 'Server unknown'} | WARN]: ${ msg }`));
+		console.log(chalk.yellow(`${prefix} | WARN]: ${ msg }`));
 		logtail.warn(msg);
 		break;
 	case LogLevel.ERROR:
-		console.log(chalk.red(`${prefix}| ${guildId ?? 'Server unknown'} | ERROR]: ${ msg }`));
+		console.log(chalk.red(`${prefix} | ERROR]: ${ msg }`));
 		logtail.error(msg);
 		break;
 	case LogLevel.HIGHLIGHT:
-		console.log(`${prefix}| ${guildId ?? 'Server unknown'} | HIGHLIGHT]: ${ chalk.bgYellow(msg) }`);
+		console.log(`${prefix} | HIGHLIGHT]: ${ chalk.bgYellow(msg) }`);
 		logtail.log(msg);
 		break;
 	default:
-		console.log(chalk.bgBlue(`${prefix}| ${guildId ?? 'Server unknown'} | LOG]: ${ msg }`));
+		console.log(chalk.bgBlue(`${prefix} | LOG]: ${ msg }`));
 		logtail.log(msg);
 		break;
 	}
 	logtail.flush();
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	guildId = '';
 };
