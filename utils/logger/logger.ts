@@ -1,14 +1,18 @@
 import { LogLevel } from '../../enums';
 import chalk from 'chalk';
 import { Logtail } from '@logtail/node';
+import dotenv from 'dotenv';
 
-const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
+dotenv.config();
+
 if (process.env.LOGTAIL_SOURCE_TOKEN) {
 	console.warn('Logger initialized');
 }
 else {
 	console.warn('Logtail source token is not set.');
 }
+const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
+
 /**
  * Logs a message with a specified log level and a timestamp prefix.
  *
