@@ -34,17 +34,13 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
+		if (existingMember && existingMember.role !== MemberRole.None && existingMember?.role !== undefined) {
 			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
 
 		logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
 
-		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
-			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
-			return;
-		}
 
 		const tankCount = members.filter(member => member.role === MemberRole.Tank).length;
 

@@ -52,9 +52,9 @@ import { GroupModel } from '../../models/group';
 export const clearRoleButtonHandler = async (client: Client, groupId: string, user: User) => {
 	const group = await GroupModel.findOne({ groupId }) || {} as Document & IGroup;
 	const userMember = group.get('members').find((member: { userId: string; role: string; }) => member.userId === user.id);
-	const originalRole = userMember.role;
+	const originalRole = userMember?.role;
 
-	if (!userMember || !Object.values(MemberRole).includes(userMember.role) || userMember.role === MemberRole.None) {
+	if (!userMember?.role || !Object.values(MemberRole).includes(userMember.role) || userMember.role === MemberRole.None) {
 		await user.send('You don\'t have a role in this group.');
 		return;
 	}
