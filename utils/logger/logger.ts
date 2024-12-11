@@ -8,11 +8,13 @@ let logtail: Logtail;
 try {
 	if (process.env.LOGTAIL_SOURCE_TOKEN) {
 		console.warn('Logger initialized');
-	} else {
+	}
+	else {
 		console.warn('Logtail source token is not set.');
 	}
 	logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
-} catch (error) {
+}
+catch (error) {
 	console.error('Failed to initialize logger:', error);
 }
 
