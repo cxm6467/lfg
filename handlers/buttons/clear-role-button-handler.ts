@@ -102,6 +102,6 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		}
 		await embedMessage.edit({ embeds: [embed] });
 		// get embed
-		// await user.send(Your role has been cleared for group ${group.get("groupName")}.);
+		await user.send(`Your role has been cleared for group ${group.get('groupName')}.`);
 	}
 };
