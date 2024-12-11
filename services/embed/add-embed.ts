@@ -67,8 +67,12 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 				},
 				{
 					name: `**${MemberRole.Dps}**`,
-					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') ||
-					('None'.repeat(Math.max(0, 2 - ((group.members ?? []).filter(member => member.role === MemberRole.Dps).length)))).replace(/None/g, 'None\n')},				}` },
+					value: `${(() => {
+						const dpsMembers = (group.members ?? []).filter(member => member.role === MemberRole.Dps);
+						if (dpsMembers.length === 0) return 'None\nNone';
+						if (dpsMembers.length === 1) return 'None';
+						return dpsMembers.map(member => `<@${member.userId}>`).join(', ');
+					})()}` },
 				{
 					name: '**Bres**',
 					value: group.members?.some(member => member.hasBres)
