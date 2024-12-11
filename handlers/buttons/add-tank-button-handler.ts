@@ -34,8 +34,8 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		if (!existingMember) {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
+		if (existingMember?.role !== MemberRole.None) {
+			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
 

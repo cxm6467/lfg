@@ -33,37 +33,32 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		if (existingMember) {
-			logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
 
-			if (existingMember.role !== MemberRole.None) {
-				await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
-				return;
-			}
+		if (existingMember?.role !== MemberRole.None) {
+			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
+			return;
+		}
 
-			const dpsCount = members.filter(member => member.role === MemberRole.Dps).length;
-			const otherRolesCount = members.filter(member => member.userId !== user.id && member.role === MemberRole.None).length;
+		const dpsCount = members.filter(member => member.role === MemberRole.Dps).length;
+		const otherRolesCount = members.filter(member => member.userId !== user.id && member.role === MemberRole.None).length;
 
-			if (dpsCount < 3 && otherRolesCount < 1) {
-				existingMember.role = MemberRole.Dps;
-				await group.save();
+		if (dpsCount < 3 && otherRolesCount < 1) {
+			existingMember.role = MemberRole.Dps;
+			await group.save();
 
-				const embedMessage = await getMessageByMessageId(
-					client,
-					group.messageId ?? '',
-					group.guildId ?? '',
-					group.channelId ?? '',
-				);
+			const embedMessage = await getMessageByMessageId(
+				client,
+				group.messageId ?? '',
+				group.guildId ?? '',
+				group.channelId ?? '',
+			);
 
-				await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
-			}
-			else {
-				await user.send('You can only have 3 DPS roles in a group.');
-			}
+			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
 		}
 		else {
-			logger(LogLevel.WARN, `User with id ${user.id} not found in group with id ${groupId}`);
+			await user.send('You can only have 3 DPS roles in a group.');
 		}
+
 	}
 	catch (error: unknown) {
 		logger(LogLevel.ERROR, `Error in addDpsButtonHandler: ${(error as Error).message}`);
