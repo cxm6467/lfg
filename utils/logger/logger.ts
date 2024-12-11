@@ -3,7 +3,12 @@ import chalk from 'chalk';
 import { Logtail } from '@logtail/node';
 
 const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
-
+if (process.env.LOGTAIL_SOURCE_TOKEN) {
+	logtail.warn('Logger initialized');
+}
+else {
+	console.warn('Logtail source token is not set.');
+}
 /**
  * Logs a message with a specified log level and a timestamp prefix.
  *
@@ -39,4 +44,5 @@ export const logger = (level: LogLevel, msg: string, guildId ?:string) => {
 		logtail.log(msg);
 		break;
 	}
+	logtail.flush();
 };
