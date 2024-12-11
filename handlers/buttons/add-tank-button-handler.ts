@@ -41,7 +41,7 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 
 		logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
 
-		if (existingMember?.role !== MemberRole.None) {
+		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
 			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
@@ -54,7 +54,9 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 		}
 
 		// Assign the Tank role and save the group
-		existingMember.role = MemberRole.Tank;
+		if (existingMember) {
+			existingMember.role = MemberRole.Tank;
+		}
 		await group.save();
 
 		const embedMessage = await getMessageByMessageId(
