@@ -4,6 +4,9 @@ FROM node:20
 # Set the working directory inside the container
 WORKDIR /app
 
+# Remove node_modules folder if it exists
+RUN rm -rf node_modules
+
 # Copy the package.json and package-lock.json files to the working directory
 COPY package*.json ./
 
