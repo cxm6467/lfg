@@ -67,8 +67,8 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 				},
 				{
 					name: `**${MemberRole.Dps}**`,
-					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
-				},
+					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') ||
+					('None'.repeat(Math.max(0, 2 - ((group.members ?? []).filter(member => member.role === MemberRole.Dps).length)))).replace(/None/g, 'None\n')},				}` },
 				{
 					name: '**Bres**',
 					value: group.members?.some(member => member.hasBres)
