@@ -34,7 +34,7 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
 
-		if (existingMember?.role !== MemberRole.None) {
+		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
 			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
@@ -43,7 +43,9 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const otherRolesCount = members.filter(member => member.userId !== user.id && member.role === MemberRole.None).length;
 
 		if (dpsCount < 3 && otherRolesCount < 1) {
-			existingMember.role = MemberRole.Dps;
+			if (existingMember) {
+				existingMember.role = MemberRole.Dps;
+			}
 			await group.save();
 
 			const embedMessage = await getMessageByMessageId(

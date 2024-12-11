@@ -34,15 +34,15 @@ export const addHealerButtonHandler = async (client: Client, groupId: string, us
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		if (existingMember?.role !== MemberRole.None) {
+		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
 			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
 
 		logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
 
-		if (existingMember.role !== MemberRole.None) {
-			await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
+		if (existingMember?.role !== MemberRole.None) {
+			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
 			return;
 		}
 
