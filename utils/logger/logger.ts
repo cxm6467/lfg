@@ -4,7 +4,7 @@ import { Logtail } from '@logtail/node';
 
 const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
 if (process.env.LOGTAIL_SOURCE_TOKEN) {
-	logtail.warn('Logger initialized');
+	console.warn('Logger initialized');
 }
 else {
 	console.warn('Logtail source token is not set.');
