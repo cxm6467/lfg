@@ -34,37 +34,42 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
-			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
-			return;
+		// Check if the user already has a role in this group
+		if (existingMember) {
+			if (existingMember.role !== MemberRole.None && existingMember.role !== undefined) {
+				await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
+				return;
+			}
 		}
-
-		logger(LogLevel.INFO, `User with id ${user.id} found in group with id ${groupId}`);
-
 
 		const tankCount = members.filter(member => member.role === MemberRole.Tank).length;
 
-		if (tankCount > 0) {
-			await user.send('You can only have 1 Tank in a group.');
-			return;
+		// Check if there is room to add a Tank role
+		if (tankCount < 1) {
+			if (existingMember) {
+				existingMember.role = MemberRole.Tank;
+			}
+			else {
+				members.push({ userId: user.id, role: MemberRole.Tank });
+			}
+
+			group.members = members;
+			await group.save();
+
+			const embedMessage = await getMessageByMessageId(
+				client,
+				group.messageId ?? '',
+				group.guildId ?? '',
+				group.channelId ?? '',
+			);
+
+			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Tank, user.id);
+
+			logger(LogLevel.INFO, `Tank role assigned to user with id ${user.id} in group with id ${groupId}`);
 		}
-
-		// Assign the Tank role and save the group
-		if (existingMember) {
-			existingMember.role = MemberRole.Tank;
+		else {
+			await user.send('You cannot be added as a Tank because the group already has a Tank role assigned.');
 		}
-		await group.save();
-
-		const embedMessage = await getMessageByMessageId(
-			client,
-			group.messageId ?? '',
-			group.guildId ?? '',
-			group.channelId ?? '',
-		);
-
-		await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Tank, user.id);
-
-		logger(LogLevel.INFO, `Tank role assigned to user with id ${user.id} in group with id ${groupId}`);
 	}
 	catch (error) {
 		logger(LogLevel.ERROR, `Error in addTankButtonHandler: ${(error as Error).message}`);

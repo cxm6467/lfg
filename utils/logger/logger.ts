@@ -29,7 +29,7 @@ export const logger = (level: LogLevel, msg: string, guildId ?:string) => {
 
 	switch (level) {
 	case LogLevel.DEBUG:
-		console.log(chalk.magenta(`${prefix}| ${guildId ?? 'Server unknown'} | DEBUG]: ${msg}`));
+		console.log(chalk.magenta(`${prefix} | DEBUG]: ${msg}`));
 		logtail.debug(msg);
 		break;
 	case LogLevel.INFO:

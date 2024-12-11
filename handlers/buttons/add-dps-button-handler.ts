@@ -33,19 +33,26 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-
-		if (existingMember?.role !== MemberRole.None && existingMember?.role !== undefined) {
-			await user.send(`You already have a role in this group. Your current role is ${existingMember?.role}.`);
-			return;
+		// Check if the user already has a role in this group
+		if (existingMember) {
+			if (existingMember.role !== MemberRole.None && existingMember.role !== undefined) {
+				await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
+				return;
+			}
 		}
 
 		const dpsCount = members.filter(member => member.role === MemberRole.Dps).length;
-		const otherRolesCount = members.filter(member => member.userId !== user.id && member.role === MemberRole.None).length;
 
-		if (dpsCount < 3 && otherRolesCount < 1) {
+		// Check if there is room to add a new DPS role
+		if (dpsCount < 3) {
 			if (existingMember) {
 				existingMember.role = MemberRole.Dps;
 			}
+			else {
+				members.push({ userId: user.id, role: MemberRole.Dps });
+			}
+
+			group.members = members;
 			await group.save();
 
 			const embedMessage = await getMessageByMessageId(
@@ -58,9 +65,8 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
 		}
 		else {
-			await user.send('You can only have 3 DPS roles in a group.');
+			await user.send('You cannot be added as a DPS because the group already has 3 DPS roles.');
 		}
-
 	}
 	catch (error: unknown) {
 		logger(LogLevel.ERROR, `Error in addDpsButtonHandler: ${(error as Error).message}`);
