@@ -55,7 +55,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 	const originalRole = userMember?.role;
 
 
-	if (userMember.role === MemberRole.None || userMember.role === undefined) {
+	if (userMember?.role === MemberRole.None || userMember?.role === undefined) {
 		await user.send('You don\'t have a role in this group.');
 		return;
 	}
