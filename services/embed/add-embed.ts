@@ -69,9 +69,10 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 					name: `**${MemberRole.Dps}**`,
 					value: `${(() => {
 						const dpsMembers = (group.members ?? []).filter(member => member.role === MemberRole.Dps);
-						if (dpsMembers.length === 0) return 'None\nNone';
-						if (dpsMembers.length === 1) return 'None';
-						return dpsMembers.map(member => `<@${member.userId}>`).join(', ');
+						const memberMentions = dpsMembers.map(member => `<@${member.userId}>`).join(', ');
+						const noneCount = Math.max(3 - dpsMembers.length, 0);
+						const noneLines = Array(noneCount).fill('None').join('\n');
+						return [memberMentions, noneLines].filter(Boolean).join('\n');
 					})()}` },
 				{
 					name: '**Bres**',
