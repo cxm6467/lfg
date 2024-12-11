@@ -5,6 +5,7 @@ FROM node:20
 WORKDIR /app
 
 # Remove node_modules folder if it exists
+RUN npm cache clean --force
 RUN rm -rf node_modules
 
 # Copy the package.json and package-lock.json files to the working directory
