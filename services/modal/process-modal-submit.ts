@@ -3,7 +3,7 @@ import { GroupModel } from '../../models/group';
 import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
 import { LogLevel } from '../../enums';
-import { formatDungeonDateTime, getUnixTimestamp, logger, mentionHelper } from '../../utils';
+import { formatDungeonDateTime, getUnixTimestamp, logger } from '../../utils';
 
 /**
  * Processes the modal submit interaction from Discord.
