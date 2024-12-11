@@ -4,14 +4,17 @@ import { Logtail } from '@logtail/node';
 import dotenv from 'dotenv';
 
 dotenv.config();
-
-if (process.env.LOGTAIL_SOURCE_TOKEN) {
-	console.warn('Logger initialized');
+let logtail: Logtail;
+try {
+	if (process.env.LOGTAIL_SOURCE_TOKEN) {
+		console.warn('Logger initialized');
+	} else {
+		console.warn('Logtail source token is not set.');
+	}
+	logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
+} catch (error) {
+	console.error('Failed to initialize logger:', error);
 }
-else {
-	console.warn('Logtail source token is not set.');
-}
-const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
 
 /**
  * Logs a message with a specified log level and a timestamp prefix.
