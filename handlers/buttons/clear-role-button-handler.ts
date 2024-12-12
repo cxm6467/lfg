@@ -90,15 +90,15 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		if (bresField && !group.members?.some(member => member.hasBres)) {
 			bresField.value = 'None';
 		}
-		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed.fields)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-		logger(LogLevel.DEBUG, `Original role: ${originalRole}`, client.guilds.cache.map((guild) => guild.name).join(', '));
-		logger(LogLevel.DEBUG, `Role field: ${JSON.stringify(roleField)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed.fields)}`);
+		logger(LogLevel.DEBUG, `Original role: ${originalRole}`);
+		logger(LogLevel.DEBUG, `Role field: ${JSON.stringify(roleField)}`);
 		if (roleField && roleField.value.includes(`<@${user.id}>`)) {
-			logger(LogLevel.INFO, `Role field found: ${JSON.stringify(roleField)}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+			logger(LogLevel.INFO, `Role field found: ${JSON.stringify(roleField)}`);
 			roleField.value = 'None';
 		}
 		else {
-			logger(LogLevel.ERROR, 'Role field not found', client.guilds.cache.map((guild) => guild.name).join(', '));
+			logger(LogLevel.ERROR, 'Role field not found');
 		}
 		await embedMessage.edit({ embeds: [embed] });
 		// get embed

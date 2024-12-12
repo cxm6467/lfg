@@ -30,39 +30,39 @@ import { LogLevel } from '../../enums';
  * Each button interaction is logged to the console for debugging purposes.
  */
 export const handleButtonInteraction = async (customId: string, groupId:string, user: User, client: Client, interaction:ButtonInteraction) => {
-	logger(LogLevel.INFO, `Button interaction received with customId: ${customId} and groupId: ${groupId}`, client.guilds.cache.map((guild) => guild.name).join(', '));
+	logger(LogLevel.INFO, `Button interaction received with customId: ${customId} and groupId: ${groupId}`);
 	const group = await GroupModel.findOne({ groupId });
 	const thread = await getThreadByMessageId(client, group?.threadId ?? '') as ThreadChannel<boolean> | undefined;
 
 	if (!thread) {
-		logger(LogLevel.ERROR, 'Thread not found', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.ERROR, 'Thread not found');
 		return;
 	}
 	switch (customId) {
 	case 'addDps':
 		if (group && thread) await addDpsButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add dps button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add dps button pressed');
 		break;
 	case 'addHealer':
 		if (group && thread) await addHealerButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add Healer button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add Healer button pressed');
 		break;
 	case 'addTank':
 		if (group && thread) await addTankButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add Tank button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add Tank button pressed');
 		break;
 	case 'addLust':
 		if (group && thread) await addLustButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add Lust button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add Lust button pressed');
 		break;
 	case 'addBres':
 		if (group && thread) await addBresButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add Bres button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add Bres button pressed');
 		break;
 	case 'addFinish':
 		if (group && thread) await finishDungeonButtonHandler(client, group, interaction.user);
@@ -71,9 +71,9 @@ export const handleButtonInteraction = async (customId: string, groupId:string, 
 	case 'addClearRole':
 		if (group && thread) await clearRoleButtonHandler(client, groupId, user);
 		await interaction.deferUpdate();
-		logger(LogLevel.INFO, 'Add Clear Role button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.INFO, 'Add Clear Role button pressed');
 		break;
 	default:
-		logger(LogLevel.WARN, 'Unknown button pressed', client.guilds.cache.map((guild) => guild.name).join(', '));
+		logger(LogLevel.WARN, 'Unknown button pressed');
 	}
 };
