@@ -79,6 +79,6 @@ setInterval(async () => {
 	catch (error) {
 		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
 	}
-}, 60000);
+}, 300000);
 
 client.login(process.env.DISCORD_BOT_TOKEN!);
