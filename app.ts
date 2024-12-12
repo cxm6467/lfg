@@ -5,7 +5,7 @@ import { mongooseConnectionHelper } from './services/mongoose-connection-helper'
 import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
 import { registerCommands, processInteractionResponse } from './services/command';
-import { getMessageByMessageId, logger, reactToMessage } from './utils';
+import { getMessageByMessageId, logger } from './utils';
 import { LogLevel, ModalField } from './enums';
 import { archiveAndDeleteThreadAndEmbed } from './utils/tasks';
 
@@ -19,10 +19,10 @@ client.once(Events.ClientReady, async (readyClient) => {
 	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`);
 	await mongooseConnectionHelper();
 	await registerCommands();
-	const groups = await GroupModel.find({ archived: { $ne: true } });
-	for (const group of groups) {
-		await reactToMessage(client, group);
-	}
+	// const groups = await GroupModel.find({ archived: { $ne: true } });
+	// for (const group of groups) {
+	// 	await reactToMessage(client, group);
+	// }
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
