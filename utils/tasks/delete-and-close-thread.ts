@@ -60,7 +60,7 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
  * Deletes thread and embed if triggered by a group member.
  */
 export const finishGroup = async (client: Client, groupId: string, userId: string) => {
-	const group = await GroupModel.findOne({ _id: groupId });
+	const group = await GroupModel.findOne({ groupId: groupId });
 
 	if (!group) {
 		logger(LogLevel.WARN, `Group with ID ${groupId} not found`);
