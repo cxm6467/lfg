@@ -12,10 +12,10 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 	logger(LogLevel.INFO, `Found ${groups.length} groups`);
 
 	for (const group of groups) {
-		logger(LogLevel.INFO, `Processing group: ${group._id}`);
+		logger(LogLevel.INFO, `Processing group: ${group.groupId}`);
 
 		if (isMoreThan24Hours(group.startTime ?? new Date())) {
-			logger(LogLevel.INFO, `Group ${group._id} is older than 24 hours`);
+			logger(LogLevel.INFO, `Group ${group.groupId} is older than 24 hours`);
 
 			const thread = await getThreadByMessageId(client, group.threadId ?? '');
 			const embed = await getMessageByMessageId(client, group.embedId ?? '', group.guildId ?? '', group.channelId ?? '');
@@ -48,10 +48,10 @@ export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 				logger(LogLevel.WARN, `Embed not found: ${group.embedId}`);
 			}
 
-			await GroupModel.updateOne({ _id: group._id }, { archived: true });
+			await GroupModel.updateOne({ groupId: group.groupId }, { archived: true });
 		}
 		else {
-			logger(LogLevel.INFO, `Group ${group._id} is not older than 24 hours`);
+			logger(LogLevel.INFO, `Group ${group.groupId} is not older than 24 hours`);
 		}
 	}
 };
@@ -112,7 +112,7 @@ export const finishGroup = async (client: Client, groupId: string, userId: strin
 		logger(LogLevel.WARN, `Embed not found: ${group.embedId}`);
 	}
 
-	await GroupModel.updateOne({ _id: group._id }, { archived: true });
+	await GroupModel.updateOne({ groupId: group.groupId }, { archived: true });
 };
 
 /**
