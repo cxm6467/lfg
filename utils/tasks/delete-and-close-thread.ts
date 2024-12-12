@@ -9,7 +9,7 @@ import { logger } from '../logger';
  */
 export const archiveAndDeleteThreadAndEmbed = async (client: Client) => {
 	const groups = await GroupModel.find({ archived: { $ne: true } });
-	logger(LogLevel.INFO, `Found ${groups.length} groups`);
+	if (groups.length > 0) logger(LogLevel.INFO, `Found ${groups.length} groups`);
 
 	for (const group of groups) {
 		logger(LogLevel.INFO, `Processing group: ${group.groupId}`);

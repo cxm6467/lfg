@@ -74,7 +74,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 setInterval(async () => {
 	try {
 		await archiveAndDeleteThreadAndEmbed(client);
-		logger(LogLevel.INFO, 'Successfully processed groups');
+		// logger(LogLevel.INFO, 'Successfully processed groups');
 	}
 	catch (error) {
 		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
