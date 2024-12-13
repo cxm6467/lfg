@@ -1,7 +1,7 @@
 import { Client, Embed, User } from 'discord.js';
 import { Document } from 'mongoose';
-import { MemberRole } from '../../enums';
-import { getMessageByMessageId } from '../../utils';
+import { LogLevel, MemberRole } from '../../enums';
+import { getMessageByMessageId, logger } from '../../utils';
 import { IGroup } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 
@@ -54,19 +54,16 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 	const userMember = group.get('members').find((member: { userId: string; role: string; }) => member.userId === user.id);
 	const originalRole = userMember?.role;
 
-	if (!userMember || userMember.role === MemberRole.None || userMember.role === undefined) {
+
+	if (userMember?.role === MemberRole.None || userMember?.role === undefined) {
 		await user.send('You don\'t have a role in this group.');
 		return;
 	}
-
-	// Check if the user's role is DPS before proceeding
-	if (originalRole === MemberRole.Dps) {
-		// Remove user from DPS list
+	else {
 		userMember.role = MemberRole.None;
 		userMember.hasBres = false;
 		userMember.hasLust = false;
 
-		// Update the group's member list to exclude this user's DPS role
 		group.set('members', group.get('members').map((member: { userId: string; role: string; }) => {
 			if (member.userId === user.id) {
 				return userMember;
@@ -81,30 +78,30 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 			await user.send('The message for the embed could not be found.');
 			return;
 		}
-
 		const embed: Embed = embedMessage.embeds[0];
-		const dpsField = embed.fields.find(field => field.name === '**DPS**');
+		const roleField = embed.fields.find(field => field.name.replace(/\*/g, '').trim() === originalRole.replace(/\*/g, '').trim());
 		const lustField = embed.fields.find(field => field.name === '**Lust**');
 		const bresField = embed.fields.find(field => field.name === '**Bres**');
 
-		// Update DPS field to remove the user while keeping other DPS users
-		if (dpsField && dpsField.value.includes(`<@${user.id}>`)) {
-			const updatedDps = dpsField.value.split('\n').filter(entry => !entry.includes(`<@${user.id}>`)).join('\n');
-			dpsField.value = updatedDps || 'None';
-		}
-
-		// Update Lust and Bres fields if necessary
 		if (lustField && !group.members?.some(member => member.hasLust)) {
 			lustField.value = 'None';
 		}
+
 		if (bresField && !group.members?.some(member => member.hasBres)) {
 			bresField.value = 'None';
 		}
-
+		logger(LogLevel.DEBUG, `Embed fields: ${JSON.stringify(embed.fields)}`);
+		logger(LogLevel.DEBUG, `Original role: ${originalRole}`);
+		logger(LogLevel.DEBUG, `Role field: ${JSON.stringify(roleField)}`);
+		if (roleField && roleField.value.includes(`<@${user.id}>`)) {
+			logger(LogLevel.INFO, `Role field found: ${JSON.stringify(roleField)}`);
+			roleField.value = 'None';
+		}
+		else {
+			logger(LogLevel.ERROR, 'Role field not found');
+		}
 		await embedMessage.edit({ embeds: [embed] });
-		await user.send(`Your DPS role has been cleared for group ${group.get('groupName')}.`);
-	}
-	else {
-		await user.send('You do not have a DPS role in this group.');
+		// get embed
+		await user.send(`Your role has been cleared for group ${group.get('groupName')}.`);
 	}
 };
