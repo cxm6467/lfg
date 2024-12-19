@@ -104,6 +104,7 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`);
 		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`);
 		await thread?.send(`${group.groupName || 'Group Name'}`);
+		await thread?.send(`Welcome to the group, <@${userId}>!`);
 	}
 	else {
 		logger(LogLevel.WARN, 'Group not found');
