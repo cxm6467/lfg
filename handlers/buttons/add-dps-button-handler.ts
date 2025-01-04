@@ -1,7 +1,7 @@
 import { Client, Message, User } from 'discord.js';
 import { IMember } from '../../interfaces';
 import { GroupModel } from '../../models/group';
-import { getMessageByMessageId, logger } from '../../utils';
+import { getMessageByMessageId, getThreadByMessageId, logger } from '../../utils';
 import { LogLevel, MemberRole } from '../../enums';
 import { updateEmbedField } from '../../services';
 
@@ -63,6 +63,8 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 			);
 
 			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
+			const thread = await getThreadByMessageId(client, group.threadId ?? '');
+			await thread?.send(`<@${user.id}> has joined the group.`);
 		}
 		else {
 			await user.send('You cannot be added as a DPS because the group already has 3 DPS roles.');

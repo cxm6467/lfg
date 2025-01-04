@@ -2,7 +2,7 @@ import { Client, Message, User } from 'discord.js';
 import { LogLevel, MemberRole } from '../../enums';
 import { IMember } from '../../interfaces';
 import { GroupModel } from '../../models/group';
-import { getMessageByMessageId, logger } from '../../utils';
+import { getMessageByMessageId, getThreadByMessageId, logger } from '../../utils';
 import { updateEmbedField } from '../../services';
 
 /**
@@ -64,6 +64,8 @@ export const addTankButtonHandler = async (client: Client, groupId: string, user
 			);
 
 			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Tank, user.id);
+			const thread = await getThreadByMessageId(client, group.threadId ?? '');
+			await thread?.send(`<@${user.id}> has joined the group.`);
 
 			logger(LogLevel.INFO, `Tank role assigned to user with id ${user.id} in group with id ${groupId}`);
 		}

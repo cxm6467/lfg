@@ -1,7 +1,7 @@
 import { Client, Embed, User } from 'discord.js';
 import { Document } from 'mongoose';
 import { LogLevel, MemberRole } from '../../enums';
-import { getMessageByMessageId, logger } from '../../utils';
+import { getMessageByMessageId, getThreadByMessageId, logger } from '../../utils';
 import { IGroup } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 
@@ -105,6 +105,8 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 
 		// Save the updated embed
 		await embedMessage.edit({ embeds: [embed] });
+		const thread = await getThreadByMessageId(client, group.threadId ?? '');
+		await thread?.send(`${user.displayName} has left the group.`);
 
 		// Notify the user of the update
 		await user.send(`Your role has been cleared in group ${group.get('groupName')}.`);
