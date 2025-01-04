@@ -112,7 +112,7 @@ export const finishGroup = async (client: Client, groupId: string, userId: strin
 		logger(LogLevel.WARN, `Embed not found: ${group.embedId}`);
 	}
 
-	await GroupModel.updateOne({ groupId: group.groupId }, { archived: true });
+	await GroupModel.updateOne({ groupId: group.groupId, threadId: group.threadId }, { archived: true });
 };
 
 /**
