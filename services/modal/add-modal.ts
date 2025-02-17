@@ -17,7 +17,7 @@ export const addModal = async (interaction: ChatInputCommandInteraction, group:I
 		.setCustomId('start-time')
 		.setLabel('Start Time')
 		.setStyle(TextInputStyle.Short)
-		.setPlaceholder('Enter a Date and Time (MM/DD/YY HH:MM AM/PM)')
+		.setPlaceholder('Enter a Date and Time (MM/DD/YYYY HH:MM AM/PM, e.g., 02/17/2025 03:30 PM)')
 		.setRequired(true);
 
 	const tzInput = new TextInputBuilder()

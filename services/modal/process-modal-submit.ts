@@ -48,7 +48,15 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 	try {
 		logger(LogLevel.INFO, `Parsing start time: ${startTime}`);
 		const parsedDateTime = await formatDungeonDateTime(startTime, timeZone);
-
+		const dateTimeRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4} (0[1-9]|1[0-2]):([0-5][0-9]) (AM|PM)$/;
+		if (!dateTimeRegex.test(startTime)) {
+			logger(LogLevel.WARN, 'Invalid date and time format');
+			await interaction.reply({
+				content: 'Invalid date and time format. Please use MM/DD/YYYY HH:MM AM/PM format, e.g., 02/17/2025 03:30 PM',
+				ephemeral: true,
+			});
+			return;
+		}
 		logger(LogLevel.INFO, `Successfully parsed start time: ${parsedDateTime.toString()}`);
 
 		const mongoTimestamp = getUnixTimestamp(startTime, timeZone);
