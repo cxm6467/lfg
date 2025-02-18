@@ -56,6 +56,10 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		logger(LogLevel.INFO, `MongoDB timestamp: ${new Date(mongoTimestamp)}`);
 		logger(LogLevel.INFO, `Discord timestamp: ${parsedDateTime}`);
 
+		if (new Date(mongoTimestamp).getTime() === 0) {
+			interaction.reply({	content: `Invalid time provided, ${startTime}. Please use MM/DD/YYYY HH:MM AM/PM format, e.g., 02/17/2025 03:30 PM`, ephemeral: true });
+		}
+
 		group.startTime = new Date(mongoTimestamp);
 		group.notes = notes;
 		await group.save();
