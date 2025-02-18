@@ -106,6 +106,8 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		// Save the updated embed
 		await embedMessage.edit({ embeds: [embed] });
 		const thread = await getThreadByMessageId(client, group.threadId ?? '');
+		await thread?.members?.remove(user.id);
+		logger(LogLevel.INFO, `Role cleared for user ${user.id} in group ${groupId}. Thread updated.`);
 		await thread?.send(`${user.displayName} has left the group.`);
 
 		// Notify the user of the update
