@@ -17,15 +17,15 @@ export const TIME_ZONE_MAPPING: Record<string, string> = {
 };
 
 export const DUNGEON_URLS = [
-	{ key: 'ARA_KARA_CITY_OF_ECHOES', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kikatal.png', borderColor: '#44408E' },
-	{ key: 'CITY_OF_THREADS', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-izo.png', borderColor: '#585281' },
-	{ key: 'THE_STONEVAULT', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-eirich.png', borderColor: '#7C8A9F' },
-	{ key: 'THE_DAWNBREAKER', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-rashanan.png', borderColor: '#848AA8' },
-	{ key: 'MISTS_OF_TIRNA_SCITHE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-mistcaller.png', borderColor: '#6432A5' },
-	{ key: 'THE_NECROTIC_WAKE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-nalthortherimebinder.png', borderColor: '#57529A' },
-	{ key: 'SIEGE_OF_BORALUS', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-viqgoth.png', borderColor: '#5D717A' },
-	{ key: 'GRIM_BATOL', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-erudax-updated.png', borderColor: '#4990A9' },
-	{ key: 'ANY', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/WoW_icon.svg/48px-WoW_icon.svg.png?20171015201105', borderColor: '#DCB106' },
+	{ key: 'OPERATION_FLOODGATE', url: '', borderColor: '#44408E' },
+	{ key: 'CINDERBREW_MEADERY', url: '', borderColor: '#585281' },
+	{ key: 'THE_ROOKERY', url: '', borderColor: '#7C8A9F' },
+	{ key: 'DARKFLAME_CLEFT', url: '', borderColor: '#848AA8' },
+	{ key: 'PRIORY_OF_THE_SACRED_FLAME', url: '', borderColor: '#6432A5' },
+	{ key: 'THE_MOTHERLODE', url: '', borderColor: '#57529A' },
+	{ key: 'MECHAGON_WORKSHOP', url: '', borderColor: '#5D717A' },
+	{ key: 'THEATER_OF_PAIN', url: '', borderColor: '#4990A9' },
+	{ key: 'ANY', url: '', borderColor: '#DCB106' },
 ];
 
 export const SG_PROD_MENTION_CHOICES: Record<string, string> = {

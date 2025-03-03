@@ -1,11 +1,11 @@
 export enum DungeonName {
-  ARA_KARA_CITY_OF_ECHOES = 'Ara-Kara, City of Echoes',
-  CITY_OF_THREADS = 'City of Threads',
-  THE_STONEVAULT = 'The Stonevault',
-  THE_DAWNBREAKER = 'The Dawnbreaker',
-  MISTS_OF_TIRNA_SCITHE = 'Mists of Tirna Scithe',
-  THE_NECROTIC_WAKE = 'The Necrotic Wake',
-  SIEGE_OF_BORALUS = 'Siege of Boralus',
-  GRIM_BATOL = 'Grim Batol',
+  OPERATION_FLOODGATE = 'Operation: Floodgate',
+  CINDERBREW_MEADERY = 'Cinderbrew Meadery',
+  THE_ROOKERY = 'The Rookery',
+  DARKFLAME_CLEFT = 'Darkflame Cleft',
+  PRIORY_OF_THE_SACRED_FLAME = 'Priory of the Sacred Flame',
+  THE_MOTHERLODE = 'The MOTHERLODE!!',
+  MECHAGON_WORKSHOP = 'Mechagon - Workshop',
+  THEATER_OF_PAIN = 'Theater of Pain',
   ANY = 'Any'
 }
