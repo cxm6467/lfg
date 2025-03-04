@@ -17,14 +17,14 @@ export const TIME_ZONE_MAPPING: Record<string, string> = {
 };
 
 export const DUNGEON_URLS = [
-	{ key: 'OPERATION_FLOODGATE', url: '', borderColor: '#44408E' },
-	{ key: 'CINDERBREW_MEADERY', url: '', borderColor: '#585281' },
-	{ key: 'THE_ROOKERY', url: '', borderColor: '#7C8A9F' },
-	{ key: 'DARKFLAME_CLEFT', url: '', borderColor: '#848AA8' },
-	{ key: 'PRIORY_OF_THE_SACRED_FLAME', url: '', borderColor: '#6432A5' },
-	{ key: 'THE_MOTHERLODE', url: '', borderColor: '#57529A' },
-	{ key: 'MECHAGON_WORKSHOP', url: '', borderColor: '#5D717A' },
-	{ key: 'THEATER_OF_PAIN', url: '', borderColor: '#4990A9' },
+	{ key: 'OPERATION_FLOODGATE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-geezle-gigazap.png', borderColor: '#500505' },
+	{ key: 'CINDERBREW_MEADERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-goldie-baronbottom.png', borderColor: '#77853D' },
+	{ key: 'THE_ROOKERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-voidstone-monstrosity.png', borderColor: '#7C8A9F' },
+	{ key: 'DARKFLAME_CLEFT', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-the-darkness.png', borderColor: '#2C2A41' },
+	{ key: 'PRIORY_OF_THE_SACRED_FLAME', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-prioress-murrpray.png', borderColor: '#CF9B49' },
+	{ key: 'THE_MOTHERLODE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-mogulrazdunk.png', borderColor: '#65686B' },
+	{ key: 'MECHAGON_WORKSHOP', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-tussle-tonks.png', borderColor: '#918333' },
+	{ key: 'THEATER_OF_PAIN', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kultharok.png', borderColor: '#745B74' },
 	{ key: 'ANY', url: '', borderColor: '#DCB106' },
 ];
 

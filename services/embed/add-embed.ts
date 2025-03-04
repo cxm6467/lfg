@@ -1,6 +1,6 @@
-import { Client, EmbedBuilder, StartThreadOptions, ColorResolvable } from 'discord.js';
+import { Client, EmbedBuilder, StartThreadOptions } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, logger, mentionHelper } from '../../utils';
+import { convertDungeonName as convertDungeonNameToUrl, getMessageByMessageId, logger, mentionHelper } from '../../utils';
 import { LogLevel, MemberRole, ModalField } from '../../enums';
 
 /**
