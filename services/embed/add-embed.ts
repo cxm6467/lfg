@@ -1,6 +1,6 @@
-import { Client, EmbedBuilder, StartThreadOptions } from 'discord.js';
+import { Client, ColorResolvable, EmbedBuilder, StartThreadOptions } from 'discord.js';
 import { GroupModel } from '../../models/group';
-import { convertDungeonName as convertDungeonNameToUrl, getMessageByMessageId, logger, mentionHelper } from '../../utils';
+import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, logger, mentionHelper } from '../../utils';
 import { LogLevel, MemberRole, ModalField } from '../../enums';
 
 /**
@@ -32,7 +32,7 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		const msg = await getMessageByMessageId(client, group.messageId, group.guildId, group.channelId);
 
 		const thumbnailUrl = convertDungeonNameToUrl(group.dungeon?.name);
-		// const embedColor = getEmbedColor(group.dungeon?.name) as ColorResolvable;
+		const embedColor = getEmbedColor(group.dungeon?.name) as ColorResolvable;
 		const initialMemberRole = group.members?.find(member => member.userId === userId)?.role;
 
 		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
@@ -40,8 +40,8 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 
 		const embed = new EmbedBuilder()
 			.setTitle(group.groupName || 'Group Name')
-			// .setColor(embedColor)
-			// .setThumbnail(thumbnailUrl)
+			.setColor(embedColor)
+			.setThumbnail(thumbnailUrl)
 			.addFields([
 				{
 					name: '**Dungeon**',
