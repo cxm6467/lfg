@@ -1,20 +1,12 @@
 import mongoose, { Mongoose } from 'mongoose';
-import dotenv from 'dotenv';
 import { LogLevel } from '../enums';
 import { logger } from '../utils';
-
-// Load environment variables from .env file
-dotenv.config();
+import { config } from './config';
 
 let conn: Mongoose | null = null;
 
 export const mongooseConnectionHelper = async () => {
-	const mongoUri = process.env.PROD_MONGO_URI;
-
-	if (!mongoUri) {
-		logger(LogLevel.ERROR, 'PROD_MONGO_URI is not defined in the .env file');
-		process.exit(1);
-	}
+	const mongoUri = config.get('PROD_MONGO_URI');
 
 	try {
 		conn = await mongoose.connect(
@@ -27,6 +19,7 @@ export const mongooseConnectionHelper = async () => {
 		return conn;
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error connecting to MongoDB: ${JSON.stringify(error)}');`);
+		logger(LogLevel.ERROR, `Error connecting to MongoDB: ${config.sanitizeForLogging(error)}`);
+		throw error;
 	}
 };

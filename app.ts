@@ -1,5 +1,4 @@
 import { ButtonInteraction, ChatInputCommandInteraction, Client, Events, GatewayIntentBits } from 'discord.js';
-import dotenv from 'dotenv';
 import { processModalSubmit, addEmbedButtons, handleButtonInteraction, updateEmbedField } from './services/';
 import { mongooseConnectionHelper } from './services/mongoose-connection-helper';
 import { GroupModel } from './models/group';
@@ -8,8 +7,7 @@ import { registerCommands, processInteractionResponse } from './services/command
 import { getMessageByMessageId, logger } from './utils';
 import { LogLevel, ModalField } from './enums';
 import { archiveAndDeleteThreadAndEmbed } from './utils/tasks';
-
-dotenv.config();
+import { config } from './services/config';
 
 const client = new Client({
 	intents: [GatewayIntentBits.Guilds],
@@ -38,7 +36,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 			modalData = await processModalSubmit(interaction);
 		}
 		catch (error) {
-			logger(LogLevel.ERROR, `Error processing modal submit: ${(error as Error).message}`);
+			logger(LogLevel.ERROR, `Error processing modal submit: ${config.sanitizeForLogging(error)}`);
 			return;
 		}
 		if (!modalData) {
@@ -77,8 +75,8 @@ setInterval(async () => {
 		// logger(LogLevel.INFO, 'Successfully processed groups');
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
+		logger(LogLevel.ERROR, `Error deleting and closing threads: ${config.sanitizeForLogging(error)}`);
 	}
 }, 300000);
 
-client.login(process.env.DISCORD_BOT_TOKEN!);
+client.login(config.get('DISCORD_BOT_TOKEN'));

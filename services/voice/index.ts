@@ -1,0 +1,1 @@
+export { VoiceIntegrationService } from './voice-integration';
