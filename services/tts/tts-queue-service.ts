@@ -252,39 +252,45 @@ export class TTSQueueService {
             }
           });
         } else {
-          // Linux/WSL - try multiple TTS options
+          // Linux/WSL - try multiple TTS options with better voices
           logger(LogLevel.INFO, `TTS on ${platform}, trying available options...`);
           
           const { exec } = require('child_process');
           
-          // Try espeak first
+          // Try espeak with different voice options (in order of preference)
+          const voiceOptions = [
+            'en-us',    // US English - clearer
+            'en-gb',    // British English - smoother
+            'en',       // Default English
+            'en-uk-rp'  // Received Pronunciation - very clear
+          ];
+          
+          const tryNextVoice = (voiceIndex: number) => {
+            if (voiceIndex >= voiceOptions.length) {
+              logger(LogLevel.WARN, `All espeak voices failed, using text-only mode`);
+              resolve();
+              return;
+            }
+            
+            const voice = voiceOptions[voiceIndex];
+            logger(LogLevel.DEBUG, `Trying espeak voice: ${voice}`);
+            
+            exec(`espeak -s 150 -v ${voice} "${message}" -w "${audioFilePath}"`, (espeakError: any) => {
+              if (espeakError) {
+                logger(LogLevel.DEBUG, `espeak voice ${voice} failed: ${espeakError.message}`);
+                tryNextVoice(voiceIndex + 1);
+              } else {
+                logger(LogLevel.INFO, `Successfully used espeak voice: ${voice}`);
+                resolve();
+              }
+            });
+          };
+          
           exec('which espeak', (error: any) => {
             if (!error) {
-              // espeak is available, use it
-              exec(`espeak -s 150 -v en "${message}" -w "${audioFilePath}"`, (espeakError: any) => {
-                if (espeakError) {
-                  logger(LogLevel.WARN, `espeak failed: ${espeakError.message}`);
-                  // Try festival as backup
-                  exec('which festival', (festivalError: any) => {
-                    if (!festivalError) {
-                      exec(`echo "${message}" | festival --tts --pipe > "${audioFilePath}"`, (festivalTtsError: any) => {
-                        if (festivalTtsError) {
-                          logger(LogLevel.WARN, `festival TTS failed: ${festivalTtsError.message}`);
-                          resolve(); // Skip TTS
-                        } else {
-                          resolve();
-                        }
-                      });
-                    } else {
-                      resolve(); // Skip TTS
-                    }
-                  });
-                } else {
-                  resolve();
-                }
-              });
+              tryNextVoice(0);
             } else {
-              // Try festival as primary option
+              // Try festival as backup
               exec('which festival', (festivalError: any) => {
                 if (!festivalError) {
                   exec(`echo "${message}" | festival --tts --pipe > "${audioFilePath}"`, (festivalTtsError: any) => {
@@ -292,6 +298,7 @@ export class TTSQueueService {
                       logger(LogLevel.WARN, `festival TTS failed: ${festivalTtsError.message}`);
                       resolve(); // Skip TTS
                     } else {
+                      logger(LogLevel.INFO, `Successfully used festival TTS`);
                       resolve();
                     }
                   });

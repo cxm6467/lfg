@@ -42,5 +42,7 @@ secrets.txt
 # Ignore files in specific directories
 logs/
 cache/
+temp/
 
+# Environment files
 .env

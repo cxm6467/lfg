@@ -11,11 +11,19 @@ This bot supports Text-to-Speech (TTS) in voice channels. When running in WSL, y
 sudo apt update
 sudo apt install espeak espeak-data
 
-# Test installation
-espeak "Hello, this is a test"
+# Test installation with different voices
+espeak -v en-us "Hello, this is a test with US English"
+espeak -v en-gb "Hello, this is a test with British English"
+espeak -v en-uk-rp "Hello, this is a test with Received Pronunciation"
 ```
 
-### Option 2: Festival (More Natural Voice)
+**Available English Voices (in order of quality):**
+- `en-us` - US English (clearer, more natural)
+- `en-gb` - British English (smoother)
+- `en-uk-rp` - Received Pronunciation (very clear, formal)
+- `en` - Default English (basic)
+
+### Option 2: Festival (More Natural Voice - Better Quality)
 ```bash
 # Ubuntu/Debian
 sudo apt update
@@ -24,6 +32,12 @@ sudo apt install festival festvox-kallpc16k
 # Test installation
 echo "Hello, this is a test" | festival --tts
 ```
+
+**Festival Advantages:**
+- More natural-sounding voice
+- Better pronunciation
+- Smoother audio output
+- Higher quality than espeak
 
 ### Option 3: No TTS (Text-Only Mode)
 If you don't install any TTS engines, the bot will work in text-only mode:

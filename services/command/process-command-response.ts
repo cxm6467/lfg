@@ -56,7 +56,7 @@ export const processInteractionResponse = async (interaction: ChatInputCommandIn
 			},
 		],
 		guildId: interaction.guildId ?? '',
-		channelId: interaction.channelId,
+		channelId: interaction.channel?.isThread() ? interaction.channel.parentId ?? interaction.channelId : interaction.channelId,
 	};
 
 	await addModal(interaction, group);
