@@ -12,7 +12,15 @@ export interface IGroup {
   threadId?: string;
   messageId?: string;
   embedId?: string;
+  voiceChannelId?: string;
+  warningMessageSent?: boolean;
   hasLust?: boolean;
   hasBres?: boolean;
   archived?: boolean;
+  archivedAt?: Date;
+  archivedBy?: string;
+  archivedReason?: string;
+  cleanedUp?: boolean;
+  cleanedUpAt?: Date;
+  cleanedUpBy?: string;
 }

@@ -3,7 +3,7 @@ import { IMember } from '../../interfaces';
 import { GroupModel } from '../../models/group';
 import { getMessageByMessageId, getThreadByMessageId, logger } from '../../utils';
 import { LogLevel, MemberRole } from '../../enums';
-import { updateEmbedField } from '../../services';
+import { updateEmbedField, clearUserFromEmbed } from '../../services';
 
 /**
  * Handles the addition of a DPS role to a user in a group when the corresponding button is pressed.
@@ -33,28 +33,13 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 		const members = group.members ?? [];
 		const existingMember = members.find((member: IMember) => member.userId === user.id);
 
-		// Check if the user already has a role in this group
-		if (existingMember) {
-			if (existingMember.role !== MemberRole.None && existingMember.role !== undefined) {
-				await user.send(`You already have a role in this group. Your current role is ${existingMember.role}.`);
-				return;
-			}
-		}
+		// Check if user is switching from another role
+		const isRoleSwitching = existingMember && existingMember.role !== MemberRole.None && existingMember.role !== undefined;
 
 		const dpsCount = members.filter(member => member.role === MemberRole.Dps).length;
 
-		// Check if there is room to add a new DPS role
-		if (dpsCount < 3) {
-			if (existingMember) {
-				existingMember.role = MemberRole.Dps;
-			}
-			else {
-				members.push({ userId: user.id, role: MemberRole.Dps });
-			}
-
-			group.members = members;
-			await group.save();
-
+		// Check if there is room to add a new DPS role (or if user is switching roles)
+		if (dpsCount < 3 || (isRoleSwitching && existingMember?.role === MemberRole.Dps)) {
 			const embedMessage = await getMessageByMessageId(
 				client,
 				group.messageId ?? '',
@@ -62,9 +47,31 @@ export const addDpsButtonHandler = async (client: Client, groupId: string, user:
 				group.channelId ?? '',
 			);
 
+			if (existingMember) {
+				const oldRole = existingMember.role;
+
+				// Clear user from embed if switching roles
+				if (isRoleSwitching) {
+					await clearUserFromEmbed(embedMessage, user.id);
+				}
+
+				existingMember.role = MemberRole.Dps;
+
+				if (isRoleSwitching && oldRole !== MemberRole.Dps) {
+					const thread = await getThreadByMessageId(client, group.threadId ?? '');
+					await thread?.send(`<@${user.id}> switched from ${oldRole} to DPS.`);
+				}
+			}
+			else {
+				members.push({ userId: user.id, role: MemberRole.Dps });
+				const thread = await getThreadByMessageId(client, group.threadId ?? '');
+				await thread?.send(`<@${user.id}> has joined the group as DPS.`);
+			}
+
+			group.members = members;
+			await group.save();
+
 			await updateEmbedField(embedMessage ?? {} as Message, MemberRole.Dps, user.id);
-			const thread = await getThreadByMessageId(client, group.threadId ?? '');
-			await thread?.send(`<@${user.id}> has joined the group.`);
 		}
 		else {
 			await user.send('You cannot be added as a DPS because the group already has 3 DPS roles.');

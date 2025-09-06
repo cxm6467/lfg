@@ -4,11 +4,12 @@
   "description": "LFG Node.js Discord.js bot",
   "main": "./app.ts",
   "scripts": {
-    "build": "echo Nothing to build",
+    "build": "npx tsc --noEmit",
     "lint": "eslint \"**/*.ts\"",
     "lint:fix": "eslint \"**/*.ts\" --fix",
     "test": "jest --config=./jest.config.js",
-    "test:coverage": "jest  --config=./jest.config.js --coverage"
+    "test:coverage": "jest  --config=./jest.config.js --coverage",
+    "start:local": "concurrently \"docker stop lfg-mongo 2>/dev/null || true && docker run -d -p 27017:27017 --name lfg-mongo --rm mongo\" \"sleep 8 && npx ts-node app.ts\""
   },
   "repository": {
     "type": "git",
@@ -38,16 +39,21 @@
   },
   "homepage": "https://github.com/cxm6467/lfg#readme",
   "dependencies": {
+    "@discordjs/voice": "^0.18.0",
     "@logtail/node": "^0.5.2",
     "@types/chalk": "^0.4.31",
+    "@types/lodash": "^4.17.20",
+    "axios": "^1.11.0",
     "chalk": "^4.1.2",
     "chrono-node": "^2.7.7",
     "discord.js": "^14.16.2",
     "dotenv": "^16.4.5",
     "l": "^0.6.0",
+    "lodash": "^4.17.21",
     "luxon": "^3.5.0",
     "moment-timezone": "^0.5.45",
     "mongoose": "^8.6.2",
+    "say": "^0.16.0",
     "ts-node": "^10.9.2",
     "typescript": ">=4.7.4 <5.6.0",
     "uuid": "^10.0.0"
@@ -59,6 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^8.8.0",
     "@typescript-eslint/parser": "^8.8.0",
     "@typescript-eslint/typescript-estree": "^8.8.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.12.0",
     "globals": "^15.10.0",
     "typescript-eslint": "^8.8.0"

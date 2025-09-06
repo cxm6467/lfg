@@ -4,7 +4,7 @@ import { DungeonName, DungeonType, MemberRole } from '../enums';
 
 
 export const DungeonSchema = new Schema<IDungeon, Model<IDungeon>>({
-	name: { type: String, required: true, enum: DungeonName },
+	name: { type: String, required: true }, // Removed enum constraint for dynamic dungeons
 	type: { type: String, required: true, enum: DungeonType },
 	level: { type: String, required: false },
 	thumbnail: { type: String, required: false },
@@ -28,6 +28,14 @@ export const GroupSchema = new Schema<IGroup, Model<IGroup>>({
 	messageId: { type: String },
 	notes: { type: String },
 	embedId: { type: String },
+	voiceChannelId: { type: String },
+	warningMessageSent: { type: Boolean, default: false },
 	startTime: { type: Date },
 	archived: { type: Boolean, default: false },
+	archivedAt: { type: Date },
+	archivedBy: { type: String },
+	archivedReason: { type: String },
+	cleanedUp: { type: Boolean, default: false },
+	cleanedUpAt: { type: Date },
+	cleanedUpBy: { type: String },
 }, { collection: 'group', timestamps: true });

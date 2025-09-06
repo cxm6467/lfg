@@ -1,6 +1,8 @@
 import { Message } from 'discord.js';
 import { LogLevel, MemberRole, ModalField, PartyBuffs } from '../../enums';
 import { logger } from '../../utils';
+import { userProfileService } from '../user/user-profile-service';
+import { EmbedStatusService } from './embed-status-service';
 
 /**
  * Updates a specific field in an embed message.
@@ -30,17 +32,17 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 	if (roleField) {
 		switch (field) {
 		case MemberRole.Tank:
-			roleField.value = `<@${userId}>`;
+			roleField.value = await getFormattedUserDisplay(userId);
 			break;
 		case MemberRole.Healer:
-			roleField.value = `<@${userId}>`;
+			roleField.value = await getFormattedUserDisplay(userId);
 			break;
 		case MemberRole.Dps:
 			if (roleField.value === 'None') {
-				roleField.value = `<@${userId}>`;
+				roleField.value = await getFormattedUserDisplay(userId);
 			}
 			else if (!roleField.value.includes(`<@${userId}>`)) {
-				roleField.value += `\n<@${userId}>`;
+				roleField.value += `\n${await getFormattedUserDisplay(userId)}`;
 			}
 			break;
 		case PartyBuffs.Bres:
@@ -51,8 +53,12 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 			break;
 		case ModalField.StartTime:
 			logger(LogLevel.INFO, `Setting start time: ${value as number}`);
-
-			roleField.value = `<t:${value as number}:F>`;
+			
+			// Use the status service to determine the display format
+			const startTimeDate = new Date((value as number) * 1000);
+			roleField.value = EmbedStatusService.hasGroupStarted(startTimeDate) 
+				? `🟢 **IN PROGRESS**\nStarted: <t:${value as number}:F>`
+				: `<t:${value as number}:F>\n<t:${value as number}:R>`;
 			break;
 		case ModalField.Notes:
 			roleField.value = value?.toString() ?? '';
@@ -67,3 +73,20 @@ export const updateEmbedField = async (message: Message|undefined, field: Member
 
 	await message?.edit({ embeds: [embed ?? {}] });
 };
+
+/**
+ * Get formatted user display with Raider.IO data
+ */
+async function getFormattedUserDisplay(userId: string): Promise<string> {
+	try {
+		const user = await userProfileService.getUserProfile(userId);
+		if (user) {
+			return await userProfileService.getFormattedUserDisplay(user, `<@${userId}>`);
+		}
+	} catch (error) {
+		logger(LogLevel.WARN, `Failed to get user profile for display: ${(error as Error).message}`);
+	}
+	
+	// Fallback to basic mention
+	return `<@${userId}>`;
+}

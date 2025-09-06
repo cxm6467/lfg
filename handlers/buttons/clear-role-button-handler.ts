@@ -30,14 +30,15 @@ import { GroupModel } from '../../models/group';
 export const clearRoleButtonHandler = async (client: Client, groupId: string, user: User) => {
 	try {
 		// Fetch the group document
-		const group = await GroupModel.findOne({ groupId }) || {} as Document & IGroup;
+		const group = await GroupModel.findOne({ groupId });
 		if (!group) {
 			throw new Error(`Group with ID ${groupId} not found.`);
 		}
 
-		const userMember = group.get('members').find(
-			(member: { userId: string; role: string }) => member.userId === user.id,
-		);
+		const members = group.members || [];
+		const userMemberIndex = members.findIndex(member => member.userId === user.id);
+		const userMember = userMemberIndex !== -1 ? members[userMemberIndex] : null;
+
 		if (!userMember) {
 			await user.send('You are not a member of this group.');
 			return;
@@ -45,24 +46,23 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 
 		const originalRole = userMember.role;
 		if (!originalRole || originalRole === MemberRole.None) {
-			await user.send('You don’t currently have a role in this group.');
+			await user.send('You do not currently have a role in this group.');
 			return;
 		}
 
 		// Clear the user's role and associated capabilities
-		userMember.role = MemberRole.None;
 		const wasBres = userMember.hasBres;
 		const wasLust = userMember.hasLust;
-		userMember.hasBres = false;
-		userMember.hasLust = false;
 
-		// Update the group's members list
-		group.set(
-			'members',
-			group.get('members').map((member: { userId: string }) =>
-				member.userId === user.id ? userMember : member,
-			),
-		);
+		// Update the member directly in the array
+		members[userMemberIndex] = {
+			...userMember,
+			role: MemberRole.None,
+			hasBres: false,
+			hasLust: false,
+		};
+
+		group.members = members;
 
 		// Save the updated group document
 		await group.save();
@@ -111,7 +111,7 @@ export const clearRoleButtonHandler = async (client: Client, groupId: string, us
 		await thread?.send(`${user.displayName} has left the group.`);
 
 		// Notify the user of the update
-		await user.send(`Your role has been cleared in group ${group.get('groupName')}.`);
+		await user.send(`Your role has been cleared in group ${group.groupName}.`);
 
 		// Log success
 		logger(LogLevel.INFO, `Role cleared for user ${user.id} in group ${groupId}. Embed updated.`);

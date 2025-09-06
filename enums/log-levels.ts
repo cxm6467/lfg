@@ -4,4 +4,13 @@ export const enum LogLevel {
   'HIGHLIGHT',
   'INFO',
   'WARN',
+  'API_REQUEST',
+  'API_RESPONSE',
+  'API_ERROR',
+  'DATABASE',
+  'DISCORD',
+  'TTS',
+  'VOICE',
+  'USER_ACTION',
+  'SYSTEM',
 }

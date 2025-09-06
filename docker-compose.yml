@@ -7,26 +7,33 @@ services:
       - "3000:3000"  # Adjust the port if your app uses a different one
     environment:
       - LOCAL_MONGO_URI=mongodb://mongo:27017/mydb
-    # depends_on:
-    #   - mongo
-    # networks:
-    #   - local
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - DISCORD_BOT_APP_ID=${DISCORD_BOT_APP_ID}
+      - DEV_GUILD_ID=${DEV_GUILD_ID}
+      - BATTLENET_CLIENT_ID=${BATTLENET_CLIENT_ID}
+      - BATTLENET_CLIENT_SECRET=${BATTLENET_CLIENT_SECRET}
+      - WOW_REGION=${WOW_REGION:-us}
+      - LOGTAIL_SOURCE_TOKEN=${LOGTAIL_SOURCE_TOKEN}
+    depends_on:
+      - mongo
+    networks:
+      - local
     volumes:
       - .:/app  # Mount the current directory to /app inside the container
     command: ["ts-node", "./app.ts"]  # Command to run your application
 
-  # mongo:
-  #   image: mongo:latest
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - mongo-data:/data/db
-  #   networks:
-  #     - local
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - local
 
-# networks:
-#   local:
-#     driver: bridge
+networks:
+  local:
+    driver: bridge
 
-# volumes:
-#   mongo-data:
+volumes:
+  mongo-data:

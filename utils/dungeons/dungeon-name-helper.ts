@@ -9,7 +9,7 @@ import { logger } from '../logger';
  * @param dungeonName - The name of the dungeon to be converted.
  * @returns The URL corresponding to the given dungeon name.
  */
-export const convertDungeonName = (dungeonName: DungeonName): string => {
+export const convertDungeonName = (dungeonName: string): string => {
 	logger(LogLevel.INFO, `convertDungeonName called with dungeonName: ${dungeonName}`);
 
 	const url = getDungeonURL(dungeonName);
@@ -24,7 +24,7 @@ export const convertDungeonName = (dungeonName: DungeonName): string => {
  * @param dungeonName - The name of the dungeon for which to get the embed color.
  * @returns The embed color as a string.
  */
-export const getEmbedColor = (dungeonName: DungeonName): string => {
+export const getEmbedColor = (dungeonName: string): string => {
 	logger(LogLevel.INFO, `getEmbedColor called with dungeonName: ${dungeonName}`);
 
 	const dungeonKey = getDungeonKeyByName(dungeonName);
@@ -42,7 +42,7 @@ export const getEmbedColor = (dungeonName: DungeonName): string => {
  * @param dungeonName - The name of the dungeon for which to get the URL.
  * @returns The URL corresponding to the given dungeon name.
  */
-const getDungeonURL = (dungeonName: DungeonName): string => {
+const getDungeonURL = (dungeonName: string): string => {
 	logger(LogLevel.INFO, `getDungeonURL called with dungeonName: ${dungeonName}`);
 
 	const dungeonKey = getDungeonKeyByName(dungeonName);
@@ -61,7 +61,7 @@ const getDungeonURL = (dungeonName: DungeonName): string => {
  * @param dungeonName - The name of the dungeon to find the key for.
  * @returns The key corresponding to the provided dungeon name, or 'ANY' if no match is found.
  */
-const getDungeonKeyByName = (dungeonName: DungeonName): keyof typeof DungeonName => {
+const getDungeonKeyByName = (dungeonName: string): keyof typeof DungeonName => {
 	logger(LogLevel.INFO, `getDungeonKeyByName called with dungeonName: ${dungeonName}`);
 
 	const key = (Object.keys(DungeonName) as Array<keyof typeof DungeonName>).find(

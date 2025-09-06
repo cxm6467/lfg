@@ -1,5 +1,5 @@
-export const SG_DEV_SERVER_ID = '771934233110773811';
-export const SG_PROD_SERVER_ID = '171797913364725765';
+// export const SG_DEV_SERVER_ID = '771934233110773811';
+// export const SG_PROD_SERVER_ID = '171797913364725765';
 export const DEV_SERVER_ID = '1146675634270109788';
 
 export const TIME_ZONE_MAPPING: Record<string, string> = {
@@ -17,16 +17,29 @@ export const TIME_ZONE_MAPPING: Record<string, string> = {
 };
 
 export const DUNGEON_URLS = [
-	{ key: 'OPERATION_FLOODGATE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-geezle-gigazap.png', borderColor: '#500505' },
-	{ key: 'CINDERBREW_MEADERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-goldie-baronbottom.png', borderColor: '#77853D' },
-	{ key: 'THE_ROOKERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-voidstone-monstrosity.png', borderColor: '#7C8A9F' },
-	{ key: 'DARKFLAME_CLEFT', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-the-darkness.png', borderColor: '#2C2A41' },
-	{ key: 'PRIORY_OF_THE_SACRED_FLAME', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-prioress-murrpray.png', borderColor: '#CF9B49' },
-	{ key: 'THE_MOTHERLODE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-mogulrazdunk.png', borderColor: '#65686B' },
-	{ key: 'MECHAGON_WORKSHOP', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-tussle-tonks.png', borderColor: '#918333' },
-	{ key: 'THEATER_OF_PAIN', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kultharok.png', borderColor: '#745B74' },
-	{ key: 'ANY', url: '', borderColor: '#DCB106' },
+	// The War Within Season 3 Dungeons (2024-2025)
+	{ key: 'OPERATION_FLOODGATE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-geezle-gigazap.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#500505' },
+	{ key: 'CINDERBREW_MEADERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-goldie-baronbottom.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#77853D' },
+	{ key: 'THE_ROOKERY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-voidstone-monstrosity.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#7C8A9F' },
+	{ key: 'DARKFLAME_CLEFT', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-the-darkness.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#2C2A41' },
+	{ key: 'PRIORY_OF_THE_SACRED_FLAME', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-prioress-murrpray.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#CF9B49' },
+	
+	// Legacy Dungeons (still available in rotation)
+	{ key: 'THE_MOTHERLODE', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-mogulrazdunk.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#65686B' },
+	{ key: 'MECHAGON_WORKSHOP', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-tussle-tonks.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#918333' },
+	{ key: 'THEATER_OF_PAIN', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-kultharok.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#745B74' },
+	
+	// Generic fallback
+	{ key: 'ANY', url: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', backupUrl: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png', borderColor: '#DCB106' },
 ];
+
+// Generic fallback images for when specific dungeon images fail
+export const FALLBACK_IMAGES = {
+	GENERIC_DUNGEON: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png',
+	MYTHIC_PLUS: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png',
+	RAID: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png',
+	DEFAULT: 'https://wow.zamimg.com/images/wow/journal/ui-ej-boss-default.png'
+};
 
 export const SG_PROD_MENTION_CHOICES: Record<string, string> = {
 	healer_role: '<@&1281359918330413190>',

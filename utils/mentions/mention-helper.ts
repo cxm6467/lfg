@@ -1,4 +1,4 @@
-import { DEV_MENTION_CHOICES, DEV_SERVER_ID, SG_DEV_MENTION_CHOICES, SG_DEV_SERVER_ID, SG_PROD_MENTION_CHOICES, SG_PROD_SERVER_ID } from '../../consts';
+import { DEV_MENTION_CHOICES, DEV_SERVER_ID, SG_DEV_MENTION_CHOICES, /* SG_DEV_SERVER_ID, */ SG_PROD_MENTION_CHOICES /* SG_PROD_SERVER_ID */ } from '../../consts';
 import { MemberRole, DungeonType, LogLevel } from '../../enums';
 import { logger } from '../logger';
 
@@ -11,16 +11,16 @@ import { logger } from '../logger';
  * @returns An array of mentions to use.
  */
 export const mentionHelper = (serverId: string, role?: MemberRole, difficulty?: DungeonType): string[] | null => {
-	logger(LogLevel.INFO, `Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
+	// logger(LogLevel.INFO, `Comparing serverId: ${serverId} with constants: SG_DEV_SERVER_ID=${SG_DEV_SERVER_ID}, DEV_SERVER_ID=${DEV_SERVER_ID} and SG_PROD_SERVER_ID=${SG_PROD_SERVER_ID}`);
 
 	let mentionChoices: Record<string, string> = {};
 	switch (String(serverId)) {
-	case String(SG_DEV_SERVER_ID):
-		mentionChoices = SG_DEV_MENTION_CHOICES;
-		break;
-	case String(SG_PROD_SERVER_ID):
-		mentionChoices = SG_PROD_MENTION_CHOICES;
-		break;
+	// case String(SG_DEV_SERVER_ID):
+	// 	mentionChoices = SG_DEV_MENTION_CHOICES;
+	// 	break;
+	// case String(SG_PROD_SERVER_ID):
+	// 	mentionChoices = SG_PROD_MENTION_CHOICES;
+	// 	break;
 	case String(DEV_SERVER_ID):
 		mentionChoices = DEV_MENTION_CHOICES;
 		break;

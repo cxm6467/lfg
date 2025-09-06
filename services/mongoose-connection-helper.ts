@@ -9,10 +9,10 @@ dotenv.config();
 let conn: Mongoose | null = null;
 
 export const mongooseConnectionHelper = async () => {
-	const mongoUri = process.env.PROD_MONGO_URI;
+	const mongoUri = process.env.LOCAL_MONGO_URI || process.env.PROD_MONGO_URI;
 
 	if (!mongoUri) {
-		logger(LogLevel.ERROR, 'PROD_MONGO_URI is not defined in the .env file');
+		logger(LogLevel.ERROR, 'Neither LOCAL_MONGO_URI nor PROD_MONGO_URI is defined in the .env file');
 		process.exit(1);
 	}
 

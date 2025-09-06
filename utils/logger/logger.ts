@@ -4,15 +4,15 @@ import { Logtail } from '@logtail/node';
 import dotenv from 'dotenv';
 
 dotenv.config();
-let logtail: Logtail;
+let logtail: Logtail | null = null;
 try {
-	if (process.env.LOGTAIL_SOURCE_TOKEN) {
-		console.warn('Logger initialized');
+	if (process.env.LOGTAIL_SOURCE_TOKEN && process.env.ENABLE_LOGTAIL === 'true') {
+		console.warn('Logger initialized with Logtail');
+		logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
 	}
 	else {
-		console.warn('Logtail source token is not set.');
+		console.warn('Logtail disabled or token not set.');
 	}
-	logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN ?? '' as string);
 }
 catch (error) {
 	console.error('Failed to initialize logger:', error);
@@ -30,30 +30,30 @@ export const logger = (level: LogLevel, msg: string, guildId ?:string) => {
 	switch (level) {
 	case LogLevel.DEBUG:
 		console.log(chalk.magenta(`${prefix} | DEBUG]: ${msg}`));
-		logtail.debug(msg);
+		if (logtail) logtail.debug(msg);
 		break;
 	case LogLevel.INFO:
 		console.log(chalk.grey(`${prefix} | INFO]: ${ msg }`));
-		logtail.info(msg);
+		if (logtail) logtail.info(msg);
 		break;
 	case LogLevel.WARN:
 		console.log(chalk.yellow(`${prefix} | WARN]: ${ msg }`));
-		logtail.warn(msg);
+		if (logtail) logtail.warn(msg);
 		break;
 	case LogLevel.ERROR:
 		console.log(chalk.red(`${prefix} | ERROR]: ${ msg }`));
-		logtail.error(msg);
+		if (logtail) logtail.error(msg);
 		break;
 	case LogLevel.HIGHLIGHT:
 		console.log(`${prefix} | HIGHLIGHT]: ${ chalk.bgYellow(msg) }`);
-		logtail.log(msg);
+		if (logtail) logtail.log(msg);
 		break;
 	default:
 		console.log(chalk.bgBlue(`${prefix} | LOG]: ${ msg }`));
-		logtail.log(msg);
+		if (logtail) logtail.log(msg);
 		break;
 	}
-	logtail.flush();
+	if (logtail) logtail.flush();
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	guildId = '';
 };

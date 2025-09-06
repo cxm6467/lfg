@@ -2,7 +2,7 @@ import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, Mes
 import { getMessageByMessageId, logger } from '../../utils';
 import { GroupModel } from '../../models/group';
 import { LogLevel } from '../../enums';
-import { SG_DEV_SERVER_ID, SG_PROD_SERVER_ID } from '../../consts';
+// import { SG_DEV_SERVER_ID, SG_PROD_SERVER_ID } from '../../consts';
 
 
 enum CustomEmoji {
@@ -44,7 +44,8 @@ export const addEmbedButtons = async (client: Client, groupId: string, guildId:s
 		if (embed) {
 			const updatedEmbed = EmbedBuilder.from(embed);
 
-			const emojiEnum = (guildId === SG_DEV_SERVER_ID || guildId === SG_PROD_SERVER_ID) ? SGEmoji : CustomEmoji;
+			// const emojiEnum = (guildId === SG_DEV_SERVER_ID || guildId === SG_PROD_SERVER_ID) ? SGEmoji : CustomEmoji;
+			const emojiEnum = CustomEmoji;
 
 			const addDps = new ButtonBuilder()
 				.setCustomId(`addDps[${group.groupId}]`)

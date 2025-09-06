@@ -4,10 +4,13 @@ import { processModalSubmit, addEmbedButtons, handleButtonInteraction, updateEmb
 import { mongooseConnectionHelper } from './services/mongoose-connection-helper';
 import { GroupModel } from './models/group';
 import { addEmbed } from './services/embed/add-embed';
-import { registerCommands, processInteractionResponse } from './services/command';
+import { registerCommands, processInteractionResponse, processHelpCommand, processJoinCommand, processLeaveCommand, processGroupsCommand, processMyGroupsCommand, processRefreshDungeonsCommand, processSetBattleTagCommand, processSetMainCommand, processProfileCommand, processRefreshProfileCommand, processSetLfmChannelCommand, processLinkGuildCommand, processUnlinkGuildCommand, processGuildConfigCommand, processCleanupCommand, processSetFallbackCommand, processRefreshSeasonCommand, processTTSStatusCommand } from './services/command';
 import { getMessageByMessageId, logger } from './utils';
 import { LogLevel, ModalField } from './enums';
 import { archiveAndDeleteThreadAndEmbed } from './utils/tasks';
+import { battleNetAPI } from './services/wow-api/battle-net-api';
+import { StartupCleanupService } from './services/startup/startup-cleanup';
+import { XpostingService } from './services/guild/xposting-service';
 
 dotenv.config();
 
@@ -19,16 +22,50 @@ client.once(Events.ClientReady, async (readyClient) => {
 	logger(LogLevel.INFO, `Logged in as ${readyClient.user?.tag}`);
 	await mongooseConnectionHelper();
 	await registerCommands();
-	// const groups = await GroupModel.find({ archived: { $ne: true } });
-	// for (const group of groups) {
-	// 	await reactToMessage(client, group);
-	// }
+
+	// Load and display current M+ season dungeons
+	try {
+		const dungeons = await battleNetAPI.getCurrentSeasonDungeons();
+		if (dungeons.length > 0) {
+			logger(LogLevel.INFO, `Current M+ Season Dungeons (${dungeons.length}):`);
+			dungeons.forEach(dungeon => {
+				logger(LogLevel.INFO, `  - ${dungeon.name} (ID: ${dungeon.id})`);
+			});
+		}
+		else {
+			logger(LogLevel.WARN, 'No current season dungeons found');
+		}
+	}
+	catch (error) {
+		logger(LogLevel.ERROR, `Failed to load M+ season dungeons: ${(error as Error).message}`);
+	}
+
+	// Perform startup cleanup
+	await StartupCleanupService.performStartupCleanup(client);
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
 	if (interaction.isCommand()) {
 		logger(LogLevel.DEBUG, `Interaction received: ${interaction.commandName}`);
 		if (interaction.commandName === 'lfm') await processInteractionResponse(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'help') await processHelpCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'join') await processJoinCommand(interaction as ChatInputCommandInteraction, client);
+		if (interaction.commandName === 'leave') await processLeaveCommand(interaction as ChatInputCommandInteraction, client);
+		if (interaction.commandName === 'groups') await processGroupsCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'mygroups') await processMyGroupsCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'refresh-dungeons') await processRefreshDungeonsCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'set-battletag') await processSetBattleTagCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'set-main') await processSetMainCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'profile') await processProfileCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'refresh-profile') await processRefreshProfileCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'set-lfm-channel') await processSetLfmChannelCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'link-guild') await processLinkGuildCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'unlink-guild') await processUnlinkGuildCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'guild-config') await processGuildConfigCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'cleanup') await processCleanupCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'set-fallback') await processSetFallbackCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'refresh-season') await processRefreshSeasonCommand(interaction as ChatInputCommandInteraction);
+		if (interaction.commandName === 'tts-status') await processTTSStatusCommand(interaction as ChatInputCommandInteraction);
 	}
 	if (interaction.isModalSubmit()) {
 		const groupId = interaction.customId.match(/\[(.*?)\]/)?.[1];
@@ -60,6 +97,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 		await updateEmbedField(msg, ModalField.StartTime, interaction.user.id, epochTimestamp);
 		await updateEmbedField(msg, ModalField.Notes, interaction.user.id, notes);
+		
+		// Post to linked guilds if x-posting is enabled
+		await XpostingService.postToLinkedGuilds(client, groupId ?? '');
 	}
 	if (interaction.isButton()) {
 		logger(LogLevel.INFO, `Button interaction: ${interaction.customId}`);
@@ -71,14 +111,16 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
 });
 
+// Run reminder system every 2 minutes to ensure we don't miss warning windows
 setInterval(async () => {
 	try {
+		logger(LogLevel.DEBUG, '🔄 Running reminder system check...');
 		await archiveAndDeleteThreadAndEmbed(client);
-		// logger(LogLevel.INFO, 'Successfully processed groups');
+		logger(LogLevel.DEBUG, '✅ Reminder system check completed');
 	}
 	catch (error) {
-		logger(LogLevel.ERROR, `Error deleting and closing threads: ${JSON.stringify(error)}`);
+		logger(LogLevel.ERROR, `❌ Error in reminder system: ${JSON.stringify(error)}`);
 	}
-}, 300000);
+}, 120000); // 2 minutes instead of 5 minutes
 
 client.login(process.env.DISCORD_BOT_TOKEN!);

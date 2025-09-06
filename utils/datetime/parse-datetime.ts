@@ -1,4 +1,5 @@
 import { DateTime } from 'luxon';
+import * as chrono from 'chrono-node';
 import { TIME_ZONE_MAPPING } from '../../consts';
 import { logger } from '../../utils/logger';
 import { LogLevel } from '../../enums';
@@ -66,7 +67,48 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 	const normalizedInput = datetimeStr.trim();
 	logger(LogLevel.DEBUG, `Normalized datetime string: '${normalizedInput}'`);
 
+	// Try chrono-node first for natural language parsing
+	try {
+		const parsedResults = chrono.parse(normalizedInput, { timezone: timeZone });
+		if (parsedResults.length > 0) {
+			const chronoResult = parsedResults[0];
+			const jsDate = chronoResult.start.date();
+
+			// Convert to Luxon DateTime in the specified timezone
+			const luxonDate = DateTime.fromJSDate(jsDate).setZone(timeZone);
+
+			if (luxonDate.isValid) {
+				logger(LogLevel.DEBUG, `Parsed with chrono-node: ${luxonDate.toString()}`);
+				const unixTimestamp = Math.floor(luxonDate.toSeconds());
+				logger(LogLevel.DEBUG, `Unix timestamp: ${unixTimestamp}`);
+				return unixTimestamp;
+			}
+		}
+	}
+	catch (chronoError) {
+		logger(LogLevel.DEBUG, `Chrono-node parsing failed: ${(chronoError as Error).message}`);
+	}
+
+	// Fallback to Luxon format parsing
 	const formats = [
+		// 24-hour formats (without AM/PM)
+		'M/d/yyyy H:mm',
+		'M/d/yyyy HH:mm',
+		'MM/d/yyyy H:mm',
+		'MM/d/yyyy HH:mm',
+		'M/dd/yyyy H:mm',
+		'M/dd/yyyy HH:mm',
+		'MM/dd/yyyy H:mm',
+		'MM/dd/yyyy HH:mm',
+		'M-d-yyyy H:mm',
+		'M-d-yyyy HH:mm',
+		'MM-d-yyyy H:mm',
+		'MM-d-yyyy HH:mm',
+		'M-dd-yyyy H:mm',
+		'M-dd-yyyy HH:mm',
+		'MM-dd-yyyy H:mm',
+		'MM-dd-yyyy HH:mm',
+		// 12-hour formats (with AM/PM)
 		'M/d/yyyy h:mm a',
 		'M/d/yyyy hh:mm a',
 		'MM/d/yyyy h:mm a',
@@ -83,6 +125,10 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 		'M-dd-yyyy hh:mm a',
 		'MM-dd-yyyy h:mm a',
 		'MM-dd-yyyy hh:mm a',
+		// Additional flexible formats
+		'h:mm M/d/yyyy',
+		'h:mm a M/d/yyyy',
+		'H:mm M/d/yyyy',
 	];
 	let parsedDate: DateTime | null = null;
 
@@ -91,7 +137,6 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 			parsedDate = DateTime.fromFormat(normalizedInput, format, { zone: timeZone });
 		}
 		catch (error) {
-			logger(LogLevel.ERROR, `Error parsing with format '${format}': ${(error as Error).message}`);
 			continue;
 		}
 		if (parsedDate.isValid) {
@@ -104,10 +149,8 @@ const parseAndConvertToUnix = (datetimeStr: string, timeZone: string): number =>
 		throw new Error(`Invalid date: Could not parse '${normalizedInput}' into a valid DateTime object.`);
 	}
 
-	const utcDate = parsedDate.toUTC();
-	const unixTimestamp = Math.floor(utcDate.toSeconds());
-
-	logger(LogLevel.DEBUG, `UTC DateTime: ${utcDate.toString()}, Unix timestamp: ${unixTimestamp}`);
+	const unixTimestamp = Math.floor(parsedDate.toSeconds());
+	logger(LogLevel.DEBUG, `UTC DateTime: ${parsedDate.toString()}, Unix timestamp: ${unixTimestamp}`);
 	return unixTimestamp;
 };
 

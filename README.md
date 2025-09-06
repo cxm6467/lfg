@@ -1,57 +1,262 @@
 
 # WoW LFG Discord Bot
 
-An invitable Discord bot to manage groups for Normal, Heroic, Mythic and Mythic+ level dungeons as well as Delves.
+An advanced Discord bot for managing World of Warcraft groups across multiple servers with cross-posting, Raider.IO integration, and intelligent scheduling.
 
+## ✨ Features
 
+### Core LFG Functionality
+- **Dynamic Dungeon Support**: Automatically fetches current M+ season dungeons from Battle.net API
+- **Multi-Difficulty Support**: Normal, Heroic, Mythic, and Mythic+ dungeons, plus Delves
+- **Role Management**: Tank, Healer, and DPS role assignments with party buff tracking
+- **Smart Scheduling**: Timezone-aware start times with automatic voice channel creation
+- **Thread Management**: Private group threads with automatic cleanup
 
+### Raider.IO Integration
+- **BattleTag Linking**: Connect your Discord account to your Battle.net BattleTag
+- **Main Character Setup**: Set your main character for automatic data fetching
+- **M+ Score Display**: Color-coded Mythic+ scores based on prestige ranges
+- **Raid Progress**: Current raid progression display in group embeds
+- **Profile Management**: View and refresh your character data
 
-## Environment Variables
+### Cross-Guild Networking
+- **Guild Linking**: Connect multiple Discord servers for cross-posting
+- **Customizable X-Posting**: Configure what information to share between servers
+- **LFM Channel Management**: Set dedicated channels for LFG posts
+- **Bidirectional Sync**: Groups automatically post to all linked servers
 
-To run this project, you will need to add the following environment variables to your .env file
+### Advanced Features
+- **Graceful Startup**: Automatic cleanup of expired events on bot restart
+- **Voice Channel Integration**: Auto-created private voice channels with automatic user movement
+- **TTS Countdown**: 10-second voice countdown with 30-second delay for group coordination
+- **Warning System**: 5-minute advance notifications for group starts
+- **Smart Cleanup**: Automatic archiving of completed groups after 24 hours
+- **Persistent Configuration**: Database-backed guild settings and user profiles
+- **Dynamic Season Detection**: Automatic current season detection from Raider.IO API
+- **Image Fallback System**: Backup images for dungeon embeds when primary images fail
+- **Admin Cleanup Tools**: Channel cleanup commands for administrators
 
-`PROD_MONGO_URI`
+## 🚀 Quick Start
 
-`DISCORD_BOT_TOKEN`
+### Prerequisites
+- Node.js 18+ 
+- MongoDB database
+- Discord Bot Token
+- Battle.net API credentials (optional, for dynamic dungeons)
 
-`DISCORD_BOT_APP_ID`
+### Environment Variables
 
-`GUILD_ID`
-
-`LOGTAIL_SOURCE_TOKEN`
-## Deployment
-
-To deploy this project run:
+Create a `.env` file with the following variables:
 
 ```bash
-npm install
-npm i -g ts-node
-npx ts-node app.ts
+# Discord Configuration
+DISCORD_BOT_TOKEN=your_discord_bot_token
+DISCORD_BOT_APP_ID=your_discord_app_id
+DEV_GUILD_ID=your_dev_guild_id  # For development commands
+
+# Database
+PROD_MONGO_URI=your_mongodb_connection_string
+
+# Battle.net API (Optional - for dynamic dungeon fetching)
+BATTLENET_CLIENT_ID=your_battlenet_client_id
+BATTLENET_CLIENT_SECRET=your_battlenet_client_secret
+WOW_REGION=us  # or eu, kr, tw, cn
+
+# Logging (Optional)
+LOGTAIL_SOURCE_TOKEN=your_logtail_token
+```
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd lfg
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+4. **Run the bot**
+   ```bash
+   npm run dev  # Development mode
+   npm start    # Production mode
+   ```
+
+### Docker Deployment
+
+```bash
+docker build -t wow-lfg-bot .
+docker run -d --env-file .env wow-lfg-bot
 ```
 
-This project does have a Dockerfile but that is currently bugged
+## 📋 Commands
 
+### Group Management
+- `/lfm [difficulty] [dungeon] [level] [role]` - Create a new LFG group
+- `/join group_id:<id> role:<role>` - Join an existing group
+- `/leave group_id:<id>` - Leave a group
+- `/groups [filters]` - List all active groups with optional filtering
+- `/mygroups` - View your current groups with pagination
 
-## Features
+### User Profile & Raider.IO
+- `/set-battletag battletag:<name#1234>` - Link your BattleTag
+- `/set-main character:<name> realm:<realm> region:<region>` - Set main character
+- `/profile` - View your profile with M+ score and raid progress
+- `/refresh-profile` - Update your Raider.IO data
 
-- `/lfg` Discord channel command
-- Sign up as a role of Dps, Healer, or Tank
-- Ability to add Lust, Battle Res, or Note
-- Set a start date that is timezone agnostic
-- Ability to clear role
-- Mentions roles for Dps, Healer, Tank, or Dungeon Type
+### Guild Management
+- `/set-lfm-channel channel:<#channel>` - Set LFM channel for this server
+- `/link-guild guild_id:<id> guild_name:<name>` - Link with another server
+- `/unlink-guild guild_id:<id>` - Unlink from a server
+- `/guild-config` - View server configuration and linked servers
 
-## Future Features
+### Admin Commands
+- `/cleanup` - Delete all bot messages, threads, and embeds in current channel (Admin only)
+- `/set-fallback` - Set Aliwicious (Illidan-US) as fallback character for Raider.IO data (Admin only)
+- `/refresh-season` - Refresh current season data from Raider.IO API (Admin only)
 
-- `/lf-` specific commands for dungeon types
-- Update embed to not have role Mentions
-- Validation of properties of the run, for example only M+ has a key level
-## Authors
+### Utility
+- `/help` - Show all available commands
+- `/refresh-dungeons` - Update dungeon list from Battle.net API
+
+## 🎮 Usage Examples
+
+### Creating a Group
+```
+/lfm mythic "Eco-Dome Al'dani" "20" tank
+```
+This creates a Mythic+ 20 Eco-Dome Al'dani group where you're the tank.
+
+### Setting Up Cross-Server Posting
+```
+/set-lfm-channel channel:#looking-for-group
+/link-guild guild_id:123456789 guild_name:"Alliance Raiders" include_voice_channels:true include_mythic_plus_score:true
+```
+
+### User Profile Setup
+```
+/set-battletag battletag:PlayerName#1234
+/set-main character:MyMain realm:Stormrage region:us
+```
+
+## 🔧 Configuration
+
+### Guild Settings
+- **Auto Cleanup**: Groups are automatically archived after 24 hours
+- **Voice Channels**: Auto-created 5 minutes before group start
+- **Warning Messages**: 5-minute advance notifications
+- **X-Posting**: Configurable cross-server posting
+
+### Raider.IO Integration
+- **M+ Score Colors**: 
+  - 🟠 3000+ (Cutting Edge)
+  - 🟣 2500+ (High End)
+  - 🔵 2000+ (Good)
+  - 🟢 1500+ (Decent)
+  - 🟡 1000+ (Beginner)
+  - ⚪ <1000 (Low)
+
+### Cross-Guild Features
+- **Bidirectional Linking**: Servers can link to each other
+- **Customizable X-Posts**: Choose what information to share
+- **Channel Auto-Detection**: Finds suitable channels if not configured
+- **Persistent Settings**: All configurations saved to database
+
+## 🏗️ Architecture
+
+### Database Collections
+- `group` - LFG group data and scheduling with cleanup metadata
+- `user` - User profiles and Raider.IO data with fallback characters
+- `guildconfig` - Server configurations and linking
+- `wowseason` - Cached dungeon data from Battle.net API
+- `season` - Current season information with cache management
+
+### Key Services
+- **GuildLinkingService**: Manages cross-server connections
+- **XpostingService**: Handles cross-guild posting
+- **UserProfileService**: Manages user data and Raider.IO integration
+- **StartupCleanupService**: Graceful startup and cleanup
+- **SeasonService**: Dynamic season detection and caching
+- **ImageFallbackService**: Handles image fallbacks for embeds
+- **ErrorHandlerService**: Comprehensive error handling and logging
+- **GroupFilterService**: Advanced group filtering and pagination
+- **BattleNetAPI**: Dynamic dungeon fetching
+- **RaiderIOAPI**: Character data integration
+
+## 🚀 Advanced Features
+
+### Smart Scheduling
+- Automatic voice channel creation 5 minutes before start
+- Automatic user movement to voice channels when groups start
+- TTS countdown with 30-second delay for group coordination
+- Warning messages sent to all group members
+- Graceful handling of past events on bot restart
+- Thread archiving and cleanup
+
+### Cross-Guild Networking
+- Real-time cross-posting to linked servers
+- Customizable information sharing
+- Automatic channel detection
+- Persistent configuration management
+
+### Raider.IO Integration
+- Automatic character data fetching
+- Color-coded M+ score display
+- Raid progression tracking
+- Profile management commands
+
+## 🔧 Development
+
+### Project Structure
+```
+├── services/
+│   ├── command/          # Discord slash command handlers
+│   ├── embed/            # Embed creation and management
+│   ├── guild/            # Cross-guild functionality
+│   ├── raiderio/         # Raider.IO API integration
+│   ├── startup/          # Startup cleanup and initialization
+│   ├── user/             # User profile management
+│   └── wow-api/          # Battle.net API integration
+├── models/               # Database models
+├── interfaces/           # TypeScript interfaces
+├── schemas/              # MongoDB schemas
+├── utils/                # Utility functions
+└── enums/                # TypeScript enums
+```
+
+### Key Technologies
+- **Discord.js v14**: Discord API integration
+- **MongoDB**: Database with Mongoose ODM
+- **TypeScript**: Type-safe development
+- **Axios**: HTTP client for API calls
+- **Luxon**: Date/time handling with timezone support
+
+### Contributing
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📝 License
+
+This project is licensed under the MIT License.
+
+## 👥 Authors
 
 - [@cxm6467](https://www.github.com/cxm6467)
 
+## 🙏 Acknowledgements
 
-## Acknowledgements
-
- - Project derived from: [MythicMate](https://github.com/Beel12213/MythicMate)
+- Project derived from: [MythicMate](https://github.com/Beel12213/MythicMate)
+- Raider.IO API for character data
+- Battle.net API for dynamic dungeon information
 

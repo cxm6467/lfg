@@ -4,6 +4,7 @@ import { IProssesedModalData } from '../../interfaces';
 import { TIME_ZONE_MAPPING } from '../../consts';
 import { LogLevel } from '../../enums';
 import { formatDungeonDateTime, getUnixTimestamp, logger, mentionHelper } from '../../utils';
+import { ErrorHandlerService } from '../error/error-handler-service';
 
 /**
  * Processes the modal submit interaction from Discord.
@@ -56,11 +57,23 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		logger(LogLevel.INFO, `MongoDB timestamp: ${new Date(mongoTimestamp)}`);
 		logger(LogLevel.INFO, `Discord timestamp: ${parsedDateTime}`);
 
-		if (new Date(mongoTimestamp).getTime() === 0) {
-			interaction.reply({	content: `Invalid time provided, ${startTime}. Please use MM/DD/YYYY HH:MM AM/PM format, e.g., 02/17/2025 03:30 PM`, ephemeral: true });
+		if (new Date(mongoTimestamp * 1000).getTime() === 0) {
+			await interaction.reply({
+				content: `Invalid time provided, ${startTime}. Please use MM/DD/YYYY HH:MM format, e.g., 02/17/2025 15:30 or 02/17/2025 03:30 PM`,
+				flags: 64, // ephemeral flag
+			});
+			
+			// Send detailed error notification via DM
+			await ErrorHandlerService.handleTimestampError(
+				interaction.client,
+				interaction.user.id,
+				startTime,
+				'lfm'
+			);
+			return;
 		}
 
-		group.startTime = new Date(mongoTimestamp);
+		group.startTime = new Date(mongoTimestamp * 1000);
 		group.notes = notes;
 		await group.save();
 
@@ -69,8 +82,7 @@ export const processModalSubmit = async (interaction: ModalSubmitInteraction): P
 		const mentions = mentionHelper(group.guildId ?? '', initialMemberRole, group.dungeon.type);
 		const groupMessage = await interaction.reply({
 			content: `${mentions?.join(' ')}`,
-			fetchReply: true,
-		});
+		}).then(() => interaction.fetchReply());
 
 		return {
 			groupMessage,

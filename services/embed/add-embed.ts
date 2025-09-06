@@ -2,6 +2,7 @@ import { Client, ColorResolvable, EmbedBuilder, StartThreadOptions } from 'disco
 import { GroupModel } from '../../models/group';
 import { convertDungeonName as convertDungeonNameToUrl, getEmbedColor, getMessageByMessageId, logger, mentionHelper } from '../../utils';
 import { LogLevel, MemberRole, ModalField } from '../../enums';
+import { userProfileService } from '../user/user-profile-service';
 
 /**
  * Adds an embed to a specified group message and starts a thread for the group.
@@ -38,54 +39,65 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 		const mentions = mentionHelper(group.guildId, initialMemberRole, group.dungeon.type);
 		logger(LogLevel.INFO, `Thumbnail URL: ${thumbnailUrl}, Dungeon: ${group.dungeon?.name}`);
 
+		// Build embed fields
+		const embedFields = [
+			{
+				name: '**Dungeon**',
+				value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level
+					? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}`
+					: 'None',
+			},
+			{
+				name: '**StartTime**',
+				value: 'None',
+			},
+			{
+				name: `**${MemberRole.Tank}**`,
+				value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
+					? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>`
+					: 'None'}`,
+			},
+			{
+				name: `**${MemberRole.Healer}**`,
+				value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
+					? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>`
+					: 'None'}`,
+			},
+			{
+				name: `**${MemberRole.Dps}**`,
+				value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
+			},
+			{
+				name: '**Bres**',
+				value: group.members?.some(member => member.hasBres)
+					? '✅'
+					: 'None',
+			},
+			{
+				name: '**Lust**',
+				value: group.members?.some(member => member.hasLust)
+					? '✅'
+					: 'None',
+			},
+			{
+				name: `**${ModalField.Notes}**`,
+				value: group.notes || 'No notes available.',
+			},
+		];
+
+		// Add voice channel link if available
+		if (group.voiceChannelId) {
+			embedFields.push({
+				name: '**Voice Channel**',
+				value: `<#${group.voiceChannelId}>`,
+			});
+		}
+
 		const embed = new EmbedBuilder()
 			.setTitle(group.groupName || 'Group Name')
 			.setColor(embedColor)
 			.setThumbnail(thumbnailUrl)
-			.addFields([
-				{
-					name: '**Dungeon**',
-					value: group.dungeon?.name && group.dungeon?.type && group.dungeon?.level
-						? `${group.dungeon.name} ${group.dungeon.type} ${group.dungeon.level}`
-						: 'None',
-				},
-				{
-					name: '**StartTime**',
-					value: 'None',
-				},
-				{
-					name: `**${MemberRole.Tank}**`,
-					value: `${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId
-						? `<@${(group.members ?? []).find(member => member.role === MemberRole.Tank)?.userId}>`
-						: 'None'}`,
-				},
-				{
-					name: `**${MemberRole.Healer}**`,
-					value: `${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId
-						? `<@${(group.members ?? []).find(member => member.role === MemberRole.Healer)?.userId}>`
-						: 'None'}`,
-				},
-				{
-					name: `**${MemberRole.Dps}**`,
-					value: `${(group.members ?? []).filter(member => member.role === MemberRole.Dps).map(member => `<@${member.userId}>`).join(', ') || 'None'}`,
-				},
-				{
-					name: '**Bres**',
-					value: group.members?.some(member => member.hasBres)
-						? '✅'
-						: 'None',
-				},
-				{
-					name: '**Lust**',
-					value: group.members?.some(member => member.hasLust)
-						? '✅'
-						: 'None',
-				},
-				{
-					name: `**${ModalField.Notes}**`,
-					value: group.notes || 'No notes available.',
-				},
-			]);
+			.addFields(embedFields);
 
 		const embedMessage = await msg?.edit({ embeds: [embed] });
 		const thread = await msg?.startThread(
@@ -103,8 +115,44 @@ export const addEmbed = async (client: Client, groupId: string, userId: string) 
 
 		logger(LogLevel.INFO, `Initial Member Role: ${initialMemberRole}`);
 		logger(LogLevel.INFO, `Mentions: ${JSON.stringify(mentions)}`);
-		await thread?.send(`${group.groupName || 'Group Name'}`);
-		await thread?.send(`Welcome to the group, <@${userId}>!`);
+		
+		// Create starting message with start time if available
+		let startingMessage = `🎮 **${group.groupName || 'Group Name'}** is starting`;
+		if (group.startTime) {
+			const startTimeUnix = Math.floor(group.startTime.getTime() / 1000);
+			startingMessage += ` at <t:${startTimeUnix}:F> (<t:${startTimeUnix}:R>)`;
+		}
+		startingMessage += `!\n\nWelcome to the group, <@${userId}>!`;
+		
+		// Add Raider.IO data to welcome message with color coding
+		try {
+			const user = await userProfileService.getUserProfile(userId);
+			if (user) {
+				const userDisplay = await userProfileService.getFormattedUserDisplay(user, `<@${userId}>`);
+				if (userDisplay !== `<@${userId}>`) {
+					startingMessage += `\n\n👤 **Player Info:** ${userDisplay}`;
+				} else {
+					// Fallback to Aliwicious if no data available - fetch real data
+					try {
+						const fallbackUser = await userProfileService.getUserProfile(userId);
+						if (fallbackUser && fallbackUser.mainCharacter) {
+							const fallbackDisplay = await userProfileService.getFormattedUserDisplay(fallbackUser, `<@${userId}>`);
+							startingMessage += `\n\n👤 **Player Info:** ${fallbackDisplay}`;
+						} else {
+							startingMessage += `\n\n👤 **Player Info:** <@${userId}> *(No character data available)*`;
+						}
+					} catch (error) {
+						startingMessage += `\n\n👤 **Player Info:** <@${userId}> *(No character data available)*`;
+					}
+				}
+			}
+		} catch (error) {
+			logger(LogLevel.WARN, `Failed to get user display for welcome message: ${(error as Error).message}`);
+			// Fallback message on error
+			startingMessage += `\n\n👤 **Player Info:** <@${userId}> *(No character data available)*`;
+		}
+		
+		await thread?.send(startingMessage);
 	}
 	else {
 		logger(LogLevel.WARN, 'Group not found');

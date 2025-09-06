@@ -44,6 +44,10 @@ export const addModal = async (interaction: ChatInputCommandInteraction, group:I
 		new ActionRowBuilder<TextInputBuilder>().addComponents(tzInput),
 		new ActionRowBuilder<TextInputBuilder>().addComponents(notesInput),
 	);
+
+	// Create the group in database first (this must succeed before showing modal)
 	await GroupModel.create(group);
+
+	// Then show modal to respond to interaction
 	await interaction.showModal(modal);
 };
