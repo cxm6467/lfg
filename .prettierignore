@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.log
+*.md
+package.json
+package-lock.json
+.env*
+*.min.js
+*.min.css

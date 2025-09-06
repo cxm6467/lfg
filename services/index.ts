@@ -7,3 +7,6 @@ export * from './analytics';
 export * from './matching';
 export * from './federation';
 export * from './voice';
+export * from './discord-client';
+export * from './security';
+export * from './monitoring';
